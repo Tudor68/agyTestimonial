@@ -1,0 +1,11 @@
+# Clasp auth token (sensitive)
+.clasprc.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and environment
+*.log
+.env
+.env.*
