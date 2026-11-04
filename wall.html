@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Wall of Love | PraisePulse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .spinner {
+      border: 2px solid rgba(79, 70, 229, 0.2);
+      border-radius: 50%;
+      border-top: 2px solid #4f46e5;
+      width: 24px;
+      height: 24px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3525cd",
+            "primary-container": "#4f46e5",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#dad7ff",
+            "primary-fixed": "#e2dfff",
+            "primary-fixed-dim": "#c3c0ff",
+            "secondary": "#855300",
+            "secondary-container": "#fea619",
+            "surface": "#faf8ff",
+            "surface-dim": "#d2d9f4",
+            "surface-bright": "#faf8ff",
+            "surface-variant": "#dae2fd",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f2f3ff",
+            "surface-container": "#eaedff",
+            "surface-container-high": "#e2e7ff",
+            "surface-container-highest": "#dae2fd",
+            "on-surface": "#131b2e",
+            "on-surface-variant": "#464555",
+            "outline": "#777587",
+            "outline-variant": "#c7c4d8",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "background": "#faf8ff"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            "space-2xs": "0.25rem",
+            "space-xs": "0.5rem",
+            "space-sm": "0.75rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "space-2xl": "3rem",
+            gutter: "1.5rem",
+            margin: "2rem"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background font-sans text-on-surface antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-outline-variant/30">
+    <div class="h-16 max-w-7xl mx-auto px-margin flex items-center justify-between gap-gutter">
+      <div class="flex items-center gap-space-sm shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold text-sm shadow-sm">
+          TF
+        </div>
+        <span class="font-bold text-lg text-on-surface tracking-tight">TestimonialFlow</span>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-space-xs">
+        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="?page=admin">Dashboard</a>
+        <a aria-current="page" class="px-space-md py-space-xs rounded-lg transition-colors bg-surface-container text-primary font-semibold text-sm" href="?page=wall">Wall of Love</a>
+        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="?page=form">Public Form</a>
+      </nav>
+
+      <div class="flex items-center gap-space-md shrink-0">
+        <a class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm" href="?page=form">
+          <span class="material-symbols-outlined text-[18px]">add_comment</span>
+          <span>Submit Story</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Embed Modal -->
+  <div class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 backdrop-blur-sm p-space-md" id="embed-modal">
+    <div class="w-full max-w-xl rounded-xl bg-surface-container-lowest p-space-xl shadow-xl flex flex-col gap-space-md border border-outline-variant/40">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-space-xs">
+          <span class="material-symbols-outlined text-primary text-[24px]">code</span>
+          <h3 class="font-bold text-base text-on-surface">Embed Wall of Love</h3>
+        </div>
+        <button class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" id="close-modal-btn" type="button">
+          <span class="material-symbols-outlined text-[20px]">close</span>
+        </button>
+      </div>
+      <p class="text-sm text-on-surface-variant">
+        Paste this iframe embed snippet anywhere on your website, blog, or sales page to display your live wall.
+      </p>
+      <div class="relative bg-surface-container-high rounded-lg p-space-md font-mono text-xs leading-relaxed text-on-surface overflow-x-auto">
+        <button class="absolute top-2 right-2 flex items-center gap-1 bg-surface-container-lowest px-space-sm py-1 rounded text-primary text-xs font-semibold shadow-sm hover:bg-primary hover:text-on-primary transition-all" id="copy-snippet-btn" type="button">
+          <span class="material-symbols-outlined text-[16px]">content_copy</span>
+          <span id="copy-btn-label">Copy Code</span>
+        </button>
+        <code id="embed-code-snippet">&lt;iframe src="" width="100%" height="800" frameborder="0" style="border:none;border-radius:12px;"&gt;&lt;/iframe&gt;</code>
+      </div>
+      <div class="flex items-center justify-end gap-space-sm pt-space-xs">
+        <button class="px-space-md py-space-xs rounded-lg text-on-surface-variant hover:bg-surface-container text-xs font-semibold transition-colors" id="dismiss-modal-btn" type="button">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="w-full pt-20 pb-16 bg-background flex-1">
+    
+    <!-- Ambient Backdrop Light Glow -->
+    <div class="relative w-full max-w-7xl mx-auto px-margin py-space-xl">
+      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-3/4 h-64 bg-gradient-to-b from-primary/5 via-secondary-container/10 to-transparent blur-3xl pointer-events-none -z-10 rounded-full"></div>
+
+      <!-- Header Section -->
+      <header class="flex flex-col md:flex-row md:items-end justify-between gap-space-lg mb-space-xl">
+        <div class="flex flex-col max-w-2xl">
+          <div class="flex items-center gap-space-xs mb-space-2xs">
+            <span class="flex h-2 w-2 rounded-full bg-secondary-container animate-pulse"></span>
+            <span class="text-xs tracking-widest uppercase text-secondary font-semibold">Verified Feedback Catalog</span>
+          </div>
+          <h1 class="text-3xl sm:text-4xl font-bold text-on-surface tracking-tight">Loved by founders, designers, and growth teams worldwide</h1>
+          <p class="text-base text-on-surface-variant mt-space-xs">Real stories and genuine feedback from verified customers.</p>
+        </div>
+
+        <div class="flex items-center gap-space-sm shrink-0">
+          <div class="hidden lg:flex items-center gap-space-xs px-space-md py-space-xs bg-surface-container-low rounded-full border border-outline-variant/30">
+            <div class="flex text-secondary-container">
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+            </div>
+            <span class="text-xs font-semibold text-on-surface" id="header-rating-avg">5.0/5</span>
+            <span class="text-xs text-on-surface-variant" id="header-review-count">Loading reviews...</span>
+          </div>
+          <button class="inline-flex items-center gap-space-xs px-space-lg py-2 rounded-lg bg-primary text-on-primary hover:bg-primary-container shadow-md hover:shadow-lg transition-all text-sm font-semibold active:scale-95" id="open-embed-btn" type="button">
+            <span class="material-symbols-outlined text-[18px]">code</span>
+            <span>Get Embed Code</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dynamic Filter Bar -->
+      <div class="w-full overflow-x-auto pb-space-xs mb-space-xl scrollbar-none">
+        <div class="flex items-center gap-space-xs min-w-max" id="filter-container">
+          <button class="filter-chip px-space-md py-space-xs rounded-full text-xs font-semibold bg-primary text-on-primary shadow-sm transition-all duration-150 cursor-pointer" data-filter="all" type="button">
+            All Testimonials
+          </button>
+        </div>
+      </div>
+
+      <!-- Testimonial Grid (3 Columns) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg items-start" id="card-grid">
+        <div class="col-span-full text-center py-24 text-on-surface-variant flex flex-col items-center justify-center gap-2">
+          <div class="spinner"></div>
+          <span>Loading Wall of Love...</span>
+        </div>
+      </div>
+
+      <!-- Empty State for Filters -->
+      <div class="hidden flex-col items-center justify-center p-space-2xl text-center" id="filter-empty-state">
+        <span class="material-symbols-outlined text-[48px] text-outline mb-space-sm">search_off</span>
+        <h3 class="text-lg font-bold text-on-surface">No testimonials found</h3>
+        <p class="text-sm text-on-surface-variant mt-1">There are no approved stories matching this tag right now.</p>
+      </div>
+
+      <!-- Live Social Proof Footer Banner -->
+      <div class="mt-space-2xl p-space-lg bg-surface-container-low rounded-xl flex flex-col sm:flex-row items-center justify-between gap-space-md shadow-sm border border-outline-variant/30">
+        <div class="flex items-center gap-space-md">
+          <div class="flex -space-x-3 overflow-hidden">
+            <div class="inline-block h-10 w-10 rounded-full ring-2 ring-surface-container-lowest bg-surface-container-highest flex items-center justify-center text-primary font-bold text-xs">TF</div>
+            <div class="inline-block h-10 w-10 rounded-full ring-2 ring-surface-container-lowest bg-primary-fixed flex items-center justify-center text-primary font-bold text-xs">★</div>
+            <div class="inline-block h-10 w-10 rounded-full ring-2 ring-surface-container-lowest bg-secondary-fixed flex items-center justify-center text-secondary font-bold text-xs">❤️</div>
+          </div>
+          <div class="flex flex-col">
+            <p class="font-semibold text-sm text-on-surface">Join fast-growing modern brands</p>
+            <p class="text-xs text-on-surface-variant">Collect authentic customer stories and boost social proof with ease.</p>
+          </div>
+        </div>
+        <a class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors text-xs font-semibold shrink-0" href="?page=form">
+          Share Your Story
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full bg-surface-container-lowest py-space-md shadow-[0_-1px_6px_rgba(0,0,0,0.02)] border-t border-outline-variant/20">
+    <div class="max-w-7xl mx-auto px-margin flex flex-col sm:flex-row items-center justify-between gap-space-md text-center sm:text-left">
+      <p class="text-xs text-on-surface-variant">© 2024 TestimonialFlow Inc. All rights reserved.</p>
+      <div class="flex items-center gap-space-lg">
+        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="?page=form">Submit Testimonial</a>
+        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="?page=admin">Admin Moderation</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    let approvedTestimonials = [];
+    let currentFilter = "all";
+
+    function loadWall() {
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(renderWall)
+          .withFailureHandler(function(err) {
+            document.getElementById("card-grid").innerHTML = `
+              <div class="col-span-full text-center py-16 text-error">
+                Failed to load Wall of Love: ${err.message || err}
+              </div>
+            `;
+          })
+          .getApprovedTestimonials();
+      } else {
+        // Mock fallback for testing
+        setTimeout(() => {
+          renderWall([
+            {
+              id: 1,
+              name: "Elena Rostova",
+              organization: "VP Product · LinearFlow",
+              rating: 5,
+              testimonial: "We replaced 3 separate survey tools in our tech stack and increased customer response rate by 340% within forty-eight hours.",
+              extractedQuote: "Cut our testimonial gathering time from 3 weeks to 10 minutes.",
+              tags: ["Time-saving", "AI Tools"],
+              headshotUrl: "",
+              timestamp: "May 19, 2024"
+            },
+            {
+              id: 2,
+              name: "Marcus Vance",
+              organization: "Founder & CEO · HyperScale AI",
+              rating: 5,
+              testimonial: "Social proof in real-time is the single biggest conversion lever we unlocked this quarter. Placing this dynamic wall right below our checkout button immediately demolished customer hesitation.",
+              extractedQuote: "Conversion on our pricing tier spiked by 28% in 48 hours.",
+              tags: ["High ROI", "Time-saving"],
+              headshotUrl: "",
+              timestamp: "May 18, 2024"
+            },
+            {
+              id: 3,
+              name: "Sarah Jenkins",
+              organization: "Product Director · CloudWave",
+              rating: 5,
+              testimonial: "Our non-technical marketing associates configured everything during a single morning coffee break. Whenever we had a minor styling query, customer support responded via chat within 4 minutes.",
+              extractedQuote: "Zero technical setup required. Plugged in and went live seamlessly.",
+              tags: ["Beginner-friendly", "Customer Support"],
+              headshotUrl: "",
+              timestamp: "May 17, 2024"
+            }
+          ]);
+        }, 500);
+      }
+    }
+
+    function renderWall(items) {
+      approvedTestimonials = items || [];
+
+      // Update Header Stats
+      const count = approvedTestimonials.length;
+      document.getElementById("header-review-count").textContent = `over ${count} stories`;
+      if (count > 0) {
+        const sumRating = approvedTestimonials.reduce((acc, cur) => acc + (Number(cur.rating) || 5), 0);
+        document.getElementById("header-rating-avg").textContent = `${(sumRating / count).toFixed(1)}/5`;
+      }
+
+      // Build Tag List
+      const tagSet = new Set();
+      approvedTestimonials.forEach(item => {
+        if (Array.isArray(item.tags)) {
+          item.tags.forEach(t => { if (t) tagSet.add(t.trim()); });
+        }
+      });
+
+      renderFilterChips(Array.from(tagSet));
+      renderCards();
+    }
+
+    function renderFilterChips(tags) {
+      const container = document.getElementById("filter-container");
+      container.innerHTML = `
+        <button class="filter-chip px-space-md py-space-xs rounded-full text-xs font-semibold ${currentFilter === 'all' ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'} shadow-sm transition-all duration-150 cursor-pointer" data-filter="all" type="button">
+          All Testimonials (${approvedTestimonials.length})
+        </button>
+      `;
+
+      tags.forEach(tag => {
+        const count = approvedTestimonials.filter(item => item.tags && item.tags.map(t => t.toLowerCase()).includes(tag.toLowerCase())).length;
+        const btn = document.createElement("button");
+        btn.className = `filter-chip px-space-md py-space-xs rounded-full text-xs font-semibold ${currentFilter.toLowerCase() === tag.toLowerCase() ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface'} transition-all duration-150 cursor-pointer`;
+        btn.setAttribute("data-filter", tag);
+        btn.textContent = `${tag} (${count})`;
+        btn.onclick = () => selectFilter(tag);
+        container.appendChild(btn);
+      });
+
+      container.querySelector('[data-filter="all"]').onclick = () => selectFilter("all");
+    }
+
+    function selectFilter(filter) {
+      currentFilter = filter;
+
+      // Update chip styles
+      const chips = document.querySelectorAll(".filter-chip");
+      chips.forEach(chip => {
+        if (chip.getAttribute("data-filter").toLowerCase() === filter.toLowerCase()) {
+          chip.className = "filter-chip px-space-md py-space-xs rounded-full text-xs font-semibold bg-primary text-on-primary shadow-sm transition-all duration-150 cursor-pointer";
+        } else {
+          chip.className = "filter-chip px-space-md py-space-xs rounded-full text-xs font-semibold bg-surface-container-low text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all duration-150 cursor-pointer";
+        }
+      });
+
+      renderCards();
+    }
+
+    function renderCards() {
+      const grid = document.getElementById("card-grid");
+      const emptyState = document.getElementById("filter-empty-state");
+
+      const filtered = approvedTestimonials.filter(item => {
+        if (currentFilter === "all") return true;
+        if (!item.tags) return false;
+        return item.tags.map(t => t.toLowerCase()).includes(currentFilter.toLowerCase());
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = "";
+        emptyState.classList.remove("hidden");
+        emptyState.classList.add("flex");
+        return;
+      }
+
+      emptyState.classList.add("hidden");
+      emptyState.classList.remove("flex");
+
+      grid.innerHTML = filtered.map(item => {
+        const stars = "★".repeat(Number(item.rating) || 5) + "☆".repeat(Math.max(0, 5 - (Number(item.rating) || 5)));
+        const avatar = item.headshotUrl ?
+          `<img src="${item.headshotUrl}" class="w-12 h-12 rounded-full object-cover shrink-0 ring-2 ring-surface-container shadow-sm" alt="${item.name}">` :
+          `<div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0 ring-2 ring-surface-container">${item.name ? item.name.charAt(0).toUpperCase() : 'A'}</div>`;
+
+        const tagsHtml = (item.tags || []).map(t => `<span class="px-space-xs py-0.5 rounded text-[11px] font-medium bg-surface-container text-on-surface-variant">#${t}</span>`).join(" ");
+
+        return `
+          <article class="flex flex-col justify-between bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 border border-outline-variant/30">
+            <div>
+              <!-- Header -->
+              <div class="flex items-start justify-between gap-space-xs mb-space-md">
+                <div class="flex items-center gap-space-sm min-w-0">
+                  ${avatar}
+                  <div class="min-w-0 flex flex-col">
+                    <span class="font-bold text-sm text-on-surface truncate">${item.name}</span>
+                    <span class="text-xs text-on-surface-variant truncate">${item.organization || "Verified Customer"}</span>
+                  </div>
+                </div>
+                <span class="text-[11px] text-on-surface-variant shrink-0 bg-surface-container-low px-2 py-0.5 rounded-full">${item.timestamp || 'Verified'}</span>
+              </div>
+
+              <!-- Rating -->
+              <div class="flex items-center gap-0.5 text-secondary-container mb-space-md text-base">
+                ${stars}
+              </div>
+
+              <!-- Best Quote (AI Callout) -->
+              ${item.extractedQuote ? `
+                <div class="border-l-4 border-primary pl-space-sm py-1 mb-space-md bg-surface-container-low/60 rounded-r-lg">
+                  <blockquote class="text-sm font-semibold text-on-surface tracking-tight italic">
+                    “${item.extractedQuote}”
+                  </blockquote>
+                </div>
+              ` : ''}
+
+              <!-- Full Testimonial -->
+              <p class="text-xs text-on-surface-variant leading-relaxed mb-space-md whitespace-pre-wrap">
+                ${item.testimonial}
+              </p>
+            </div>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-1 pt-space-xs border-t border-outline-variant/20">
+              ${tagsHtml}
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    // Embed Modal handling
+    (function initEmbedModal() {
+      const modal = document.getElementById("embed-modal");
+      const openBtn = document.getElementById("open-embed-btn");
+      const closeBtn = document.getElementById("close-modal-btn");
+      const dismissBtn = document.getElementById("dismiss-modal-btn");
+      const copyBtn = document.getElementById("copy-snippet-btn");
+      const copyLabel = document.getElementById("copy-btn-label");
+      const codeSnippet = document.getElementById("embed-code-snippet");
+
+      // Dynamically compute embed code
+      const currentUrl = window.location.href.split("?")[0] + "?page=wall";
+      if (codeSnippet) {
+        codeSnippet.textContent = `<iframe src="${currentUrl}" width="100%" height="800" frameborder="0" style="border:none;border-radius:12px;"></iframe>`;
+      }
+
+      function openModal() {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+      }
+
+      function closeModal() {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+
+      if (openBtn) openBtn.addEventListener("click", openModal);
+      if (closeBtn) closeBtn.addEventListener("click", closeModal);
+      if (dismissBtn) dismissBtn.addEventListener("click", closeModal);
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+          const text = codeSnippet.textContent;
+          navigator.clipboard.writeText(text).then(() => {
+            copyLabel.textContent = "Copied!";
+            setTimeout(() => {
+              copyLabel.textContent = "Copy Code";
+            }, 2000);
+          });
+        });
+      }
+    })();
+
+    // Initial load
+    document.addEventListener("DOMContentLoaded", loadWall);
+  </script>
+</body>
+</html>
+

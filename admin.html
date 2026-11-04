@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Admin Moderation | PraisePulse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .spinner {
+      border: 2px solid rgba(79, 70, 229, 0.2);
+      border-radius: 50%;
+      border-top: 2px solid #4f46e5;
+      width: 24px;
+      height: 24px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3525cd",
+            "primary-container": "#4f46e5",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#dad7ff",
+            "primary-fixed": "#e2dfff",
+            "primary-fixed-dim": "#c3c0ff",
+            "secondary": "#855300",
+            "secondary-container": "#fea619",
+            "surface": "#faf8ff",
+            "surface-dim": "#d2d9f4",
+            "surface-bright": "#faf8ff",
+            "surface-variant": "#dae2fd",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f2f3ff",
+            "surface-container": "#eaedff",
+            "surface-container-high": "#e2e7ff",
+            "surface-container-highest": "#dae2fd",
+            "on-surface": "#131b2e",
+            "on-surface-variant": "#464555",
+            "outline": "#777587",
+            "outline-variant": "#c7c4d8",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "background": "#faf8ff"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            "space-2xs": "0.25rem",
+            "space-xs": "0.5rem",
+            "space-sm": "0.75rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "space-2xl": "3rem",
+            gutter: "1.5rem",
+            margin: "2rem"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background font-sans text-on-surface antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-outline-variant/30">
+    <div class="h-16 max-w-7xl mx-auto px-margin flex items-center justify-between gap-gutter">
+      <div class="flex items-center gap-space-sm shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold text-sm shadow-sm">
+          TF
+        </div>
+        <span class="font-bold text-lg text-on-surface tracking-tight">TestimonialFlow</span>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-space-xs">
+        <a aria-current="page" class="px-space-md py-space-xs rounded-lg transition-colors bg-surface-container text-primary font-semibold text-sm" href="?page=admin">Dashboard</a>
+        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="?page=wall">Wall of Love</a>
+        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="?page=form">Public Form</a>
+      </nav>
+
+      <div class="flex items-center gap-space-md shrink-0">
+        <a class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm" href="?page=form" target="_blank">
+          <span class="material-symbols-outlined text-[18px]">open_in_new</span>
+          <span>View Public Form</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="w-full pt-20 pb-16 bg-background flex-1">
+    <div class="max-w-7xl mx-auto w-full px-margin py-space-lg flex flex-col gap-space-xl">
+      
+      <!-- Top Action / Context Row -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md">
+        <div class="flex flex-col gap-space-2xs">
+          <div class="flex items-center gap-space-xs text-primary text-xs font-semibold tracking-widest uppercase">
+            <span class="inline-block w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            <span>Live Operations Engine</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">Review & Moderation Center</h1>
+          <p class="text-sm text-on-surface-variant max-w-xl">
+            Curate high-impact customer sentiment, audit Gemini AI takeaways, and approve verified stories for the Wall of Love.
+          </p>
+        </div>
+        <div class="flex items-center gap-space-sm self-start sm:self-auto">
+          <button onclick="loadData()" class="inline-flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface text-sm font-semibold transition-colors shadow-sm" type="button">
+            <span class="material-symbols-outlined text-[18px]">refresh</span>
+            <span>Refresh</span>
+          </button>
+          <a href="?page=wall" target="_blank" class="inline-flex items-center gap-space-xs px-space-md py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold transition-all shadow-md shadow-primary/20">
+            <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+            <span>Open Wall of Love</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Metrics Bento Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+        
+        <!-- Total -->
+        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-space-sm">
+            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Total Testimonials</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[18px]">forum</span>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-on-surface" id="metric-total">--</div>
+          <div class="mt-space-sm text-xs text-on-surface-variant flex items-center gap-1">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
+            <span id="metric-total-sub">All submissions</span>
+          </div>
+        </div>
+
+        <!-- Pending Moderation -->
+        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-space-sm">
+            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Pending Review</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary">
+              <span class="material-symbols-outlined text-[18px]">hourglass_top</span>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-secondary" id="metric-pending">--</div>
+          <div class="mt-space-sm text-xs text-on-surface-variant flex items-center gap-1">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+            <span>Requires moderation</span>
+          </div>
+        </div>
+
+        <!-- Approved -->
+        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-space-sm">
+            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Approved for Wall</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[18px]">verified</span>
+            </div>
+          </div>
+          <div class="text-3xl font-bold text-primary" id="metric-approved">--</div>
+          <div class="mt-space-sm text-xs text-on-surface-variant flex items-center gap-1">
+            <span class="inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
+            <span>Visible to public</span>
+          </div>
+        </div>
+
+        <!-- Average Rating -->
+        <div class="p-space-lg rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/30 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-space-sm">
+            <span class="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Average Rating</span>
+            <div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-secondary-container">
+              <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-1">
+            <span class="text-3xl font-bold text-on-surface" id="metric-avg">--</span>
+            <span class="text-sm text-on-surface-variant">/ 5.0</span>
+          </div>
+          <div class="mt-space-sm text-xs text-on-surface-variant flex items-center gap-1" id="stars-visual">
+            ★★★★★
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Moderation Queue Table Section -->
+      <div class="flex flex-col gap-space-md">
+        
+        <!-- Queue Header with Filters & Search -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+          <div class="flex items-center gap-space-sm">
+            <h2 class="text-lg font-bold text-on-surface">Incoming & Moderated Testimonials</h2>
+            <span class="px-2.5 py-0.5 rounded-full bg-surface-container text-primary text-xs font-bold" id="badge-count">-- Reviews</span>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-space-sm">
+            <!-- Search Bar -->
+            <div class="relative min-w-[240px] flex-1 sm:flex-initial">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+              <input 
+                id="search-input" 
+                class="w-full pl-9 pr-space-md py-2 rounded-lg bg-surface-container-lowest text-on-surface placeholder:text-outline text-xs shadow-sm border border-outline-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/20" 
+                placeholder="Search submitters, quotes, tags..." 
+                type="text"
+                oninput="applyFilters()">
+            </div>
+
+            <!-- Status Filter Dropdown -->
+            <div class="relative inline-flex items-center">
+              <select 
+                id="status-filter" 
+                class="appearance-none pl-space-md pr-9 py-2 rounded-lg bg-surface-container-lowest text-on-surface text-xs font-semibold shadow-sm border border-outline-variant/40 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20"
+                onchange="applyFilters()">
+                <option value="all">All Reviews</option>
+                <option value="pending" selected>Pending Review</option>
+                <option value="approved">Approved for Wall</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <span class="material-symbols-outlined absolute right-2.5 pointer-events-none text-on-surface-variant text-[18px]">expand_more</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Container -->
+        <div class="w-full bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant/30 overflow-hidden">
+          <div class="overflow-x-auto min-h-[300px]">
+            <table class="w-full text-left min-w-[1000px]">
+              <thead class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider border-b border-outline-variant/30">
+                <tr>
+                  <th class="py-space-md px-space-lg font-semibold">Submitter</th>
+                  <th class="py-space-md px-space-md font-semibold">Rating</th>
+                  <th class="py-space-md px-space-md font-semibold min-w-[320px]">Gemini Best Quote</th>
+                  <th class="py-space-md px-space-md font-semibold">Topic Tags</th>
+                  <th class="py-space-md px-space-md font-semibold text-center">Status</th>
+                  <th class="py-space-md px-space-lg font-semibold text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="table-body" class="divide-y divide-outline-variant/20 text-xs">
+                <tr>
+                  <td colspan="6" class="text-center py-16 text-on-surface-variant">
+                    <div class="flex flex-col items-center justify-center gap-2">
+                      <div class="spinner"></div>
+                      <span>Loading testimonials...</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Edit Details Modal -->
+  <div id="edit-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-surface-container-lowest rounded-xl shadow-xl max-w-lg w-full p-space-lg border border-outline-variant/40 flex flex-col gap-space-md">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-on-surface flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-primary text-[20px]">edit</span>
+          Edit Extracted Quote & Tags
+        </h3>
+        <button onclick="closeEditModal()" class="p-1 rounded hover:bg-surface-container text-on-surface-variant" type="button">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <input type="hidden" id="edit-row-id">
+
+      <div>
+        <label class="block text-xs font-semibold text-on-surface mb-1" for="modal-extracted-quote">
+          Extracted Quote (Featured on Wall & Cards)
+        </label>
+        <textarea id="modal-extracted-quote" rows="3" class="w-full bg-surface-container-low rounded-lg p-space-sm text-xs text-on-surface border border-outline-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/20"></textarea>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-on-surface mb-1" for="modal-tags">
+          Topic Tags (Comma-separated)
+        </label>
+        <input type="text" id="modal-tags" class="w-full bg-surface-container-low rounded-lg px-space-sm py-2 text-xs text-on-surface border border-outline-variant/40 focus:outline-none focus:ring-2 focus:ring-primary/20">
+      </div>
+
+      <div class="flex items-center justify-end gap-space-xs pt-space-xs">
+        <button onclick="closeEditModal()" class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface text-xs font-semibold hover:bg-surface-container-high transition-colors" type="button">Cancel</button>
+        <button onclick="saveEditModal()" class="px-space-md py-2 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container transition-colors shadow-sm" type="button">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Detail Inspection Modal -->
+  <div id="detail-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-surface-container-lowest rounded-xl shadow-xl max-w-lg w-full p-space-lg border border-outline-variant/40 flex flex-col gap-space-md max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between">
+        <h3 class="text-base font-bold text-on-surface">Testimonial Details</h3>
+        <button onclick="closeDetailModal()" class="p-1 rounded hover:bg-surface-container text-on-surface-variant" type="button">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <div id="detail-modal-body" class="space-y-3 text-xs"></div>
+
+      <div class="flex justify-end pt-2">
+        <button onclick="closeDetailModal()" class="px-space-md py-1.5 rounded-lg bg-surface-container text-on-surface text-xs font-semibold hover:bg-surface-container-high" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="w-full bg-surface-container-lowest py-space-md shadow-[0_-1px_6px_rgba(0,0,0,0.02)] border-t border-outline-variant/20">
+    <div class="max-w-7xl mx-auto px-margin flex flex-col sm:flex-row items-center justify-between gap-space-md text-center sm:text-left">
+      <p class="text-xs text-on-surface-variant">© 2024 TestimonialFlow Inc. All rights reserved.</p>
+      <div class="flex items-center gap-space-lg">
+        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="?page=wall">Wall of Love</a>
+        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="?page=form">Submit Testimonial</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script -->
+  <script>
+    let allTestimonials = [];
+
+    function loadData() {
+      const tbody = document.getElementById("table-body");
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="text-center py-16 text-on-surface-variant">
+            <div class="flex flex-col items-center justify-center gap-2">
+              <div class="spinner"></div>
+              <span>Refreshing database...</span>
+            </div>
+          </td>
+        </tr>
+      `;
+
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(renderAdminData)
+          .withFailureHandler(function(err) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-error">Failed to load data: ${err.message || err}</td></tr>`;
+          })
+          .getAdminTestimonials();
+      } else {
+        // Mock fallback for local preview
+        setTimeout(() => {
+          renderAdminData({
+            testimonials: [
+              {
+                rowId: 2,
+                timestamp: "2024-05-19 14:22",
+                name: "Elena Rostova",
+                email: "elena@linearflow.io",
+                organization: "VP Product · LinearFlow",
+                rating: 5,
+                testimonial: "We replaced 3 separate survey tools in our tech stack and increased customer response rate by 340% within forty-eight hours.",
+                extractedQuote: "We replaced 3 separate survey tools in our tech stack and increased customer response rate by 340% within forty-eight hours.",
+                tags: "Time-saving, Consolidation, ROI",
+                status: "Approved",
+                headshotUrl: ""
+              },
+              {
+                rowId: 3,
+                timestamp: "2024-05-18 10:15",
+                name: "Marcus Chen",
+                email: "marcus@novapay.com",
+                organization: "Staff Architect · NovaPay",
+                rating: 5,
+                testimonial: "Embeddable widgets configured seamlessly via Webhooks in under ten minutes without bothering our frontend devs.",
+                extractedQuote: "Embeddable widgets configured seamlessly via Webhooks in under ten minutes without bothering our frontend devs.",
+                tags: "Developer UX, API Integrations",
+                status: "Pending",
+                headshotUrl: ""
+              }
+            ],
+            metrics: {
+              total: 2,
+              pending: 1,
+              approved: 1,
+              rejected: 0,
+              avgRating: "5.0"
+            }
+          });
+        }, 500);
+      }
+    }
+
+    function renderAdminData(data) {
+      if (!data) return;
+      allTestimonials = data.testimonials || [];
+
+      // Update Metrics
+      const metrics = data.metrics || {};
+      document.getElementById("metric-total").textContent = metrics.total || 0;
+      document.getElementById("metric-pending").textContent = metrics.pending || 0;
+      document.getElementById("metric-approved").textContent = metrics.approved || 0;
+      document.getElementById("metric-avg").textContent = metrics.avgRating || "5.0";
+
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const search = (document.getElementById("search-input").value || "").toLowerCase().trim();
+      const statusFilter = document.getElementById("status-filter").value.toLowerCase();
+
+      const filtered = allTestimonials.filter(item => {
+        // Status filter
+        if (statusFilter !== "all" && (item.status || "").toLowerCase() !== statusFilter) {
+          return false;
+        }
+        // Search filter
+        if (search) {
+          const matchName = (item.name || "").toLowerCase().includes(search);
+          const matchOrg = (item.organization || "").toLowerCase().includes(search);
+          const matchQuote = (item.extractedQuote || item.testimonial || "").toLowerCase().includes(search);
+          const matchTags = (item.tags || "").toLowerCase().includes(search);
+          const matchEmail = (item.email || "").toLowerCase().includes(search);
+          if (!matchName && !matchOrg && !matchQuote && !matchTags && !matchEmail) return false;
+        }
+        return true;
+      });
+
+      document.getElementById("badge-count").textContent = `${filtered.length} Reviews`;
+      renderTableRows(filtered);
+    }
+
+    function renderTableRows(items) {
+      const tbody = document.getElementById("table-body");
+      if (!items || items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-16 text-on-surface-variant">No testimonials found matching your filter criteria.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = items.map(item => {
+        const stars = "★".repeat(Number(item.rating) || 5) + "☆".repeat(Math.max(0, 5 - (Number(item.rating) || 5)));
+        const avatar = item.headshotUrl ? 
+          `<img src="${item.headshotUrl}" class="w-9 h-9 rounded-full object-cover shrink-0 shadow-sm border border-outline-variant/40" alt="${item.name}">` :
+          `<div class="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">${item.name ? item.name.charAt(0).toUpperCase() : 'A'}</div>`;
+
+        const tagsList = (item.tags || "").split(",").map(t => t.trim()).filter(Boolean);
+        const tagsHtml = tagsList.length ? tagsList.map(t => `<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary text-[11px] font-semibold">${t}</span>`).join(" ") : `<span class="text-outline text-xs">No tags</span>`;
+
+        let statusBadge = "";
+        const s = (item.status || "Pending").toLowerCase();
+        if (s === "approved") {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-green-50 text-green-700 font-semibold text-[11px] border border-green-200">
+            <span class="material-symbols-outlined text-[14px]">check_circle</span> Live on Wall
+          </span>`;
+        } else if (s === "rejected") {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-red-50 text-red-700 font-semibold text-[11px] border border-red-200">
+            <span class="material-symbols-outlined text-[14px]">cancel</span> Rejected
+          </span>`;
+        } else {
+          statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 font-semibold text-[11px] border border-amber-200">
+            <span class="material-symbols-outlined text-[14px]">pending</span> Pending
+          </span>`;
+        }
+
+        return `
+          <tr class="hover:bg-surface-container-low/50 transition-colors">
+            <!-- Submitter -->
+            <td class="py-space-md px-space-lg">
+              <div class="flex items-center gap-space-sm">
+                ${avatar}
+                <div class="flex flex-col min-w-0">
+                  <span class="font-semibold text-on-surface truncate">${item.name || "Anonymous"}</span>
+                  <span class="text-xs text-on-surface-variant truncate">${item.organization || "Independent Customer"}</span>
+                  <span class="text-[11px] text-outline truncate">${item.email || "No email"}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Rating -->
+            <td class="py-space-md px-space-md whitespace-nowrap">
+              <span class="text-secondary-container font-medium">${stars}</span>
+              <span class="text-xs text-on-surface-variant block mt-0.5">${item.rating}.0 Star</span>
+            </td>
+
+            <!-- Best Quote -->
+            <td class="py-space-md px-space-md max-w-sm">
+              <div class="p-space-xs rounded-lg bg-surface-container-low text-on-surface">
+                <div class="flex items-center gap-1 text-primary text-[11px] font-semibold mb-0.5">
+                  <span class="material-symbols-outlined text-[13px]">auto_awesome</span>
+                  <span>Extracted Quote</span>
+                </div>
+                <p class="italic line-clamp-2 text-xs">“${item.extractedQuote || item.testimonial}”</p>
+              </div>
+            </td>
+
+            <!-- Topic Tags -->
+            <td class="py-space-md px-space-md">
+              <div class="flex flex-wrap gap-1 max-w-[200px]">
+                ${tagsHtml}
+              </div>
+            </td>
+
+            <!-- Status -->
+            <td class="py-space-md px-space-md text-center whitespace-nowrap">
+              ${statusBadge}
+            </td>
+
+            <!-- Actions -->
+            <td class="py-space-md px-space-lg text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-1">
+                ${s !== "approved" ? `
+                  <button onclick="changeStatus(${item.rowId}, 'Approved')" title="Approve for Wall" class="px-2 py-1 rounded bg-green-600 hover:bg-green-700 text-white font-semibold text-xs transition-colors">
+                    Approve
+                  </button>
+                ` : `
+                  <button onclick="changeStatus(${item.rowId}, 'Pending')" title="Mark as Pending" class="px-2 py-1 rounded bg-amber-600 hover:bg-amber-700 text-white font-semibold text-xs transition-colors">
+                    Unpublish
+                  </button>
+                `}
+                ${s !== "rejected" ? `
+                  <button onclick="changeStatus(${item.rowId}, 'Rejected')" title="Reject" class="px-2 py-1 rounded bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs transition-colors border border-red-200">
+                    Reject
+                  </button>
+                ` : ""}
+                <button onclick="openEditModal(${item.rowId})" title="Edit Quote/Tags" class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button onclick="inspectDetail(${item.rowId})" title="Inspect Full Feedback" class="p-1 rounded hover:bg-surface-container text-on-surface-variant hover:text-on-surface transition-colors">
+                  <span class="material-symbols-outlined text-[18px]">visibility</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function changeStatus(rowId, newStatus) {
+      const item = allTestimonials.find(t => t.rowId === rowId);
+      if (item) item.status = newStatus;
+      applyFilters();
+
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function() {
+            loadData();
+          })
+          .withFailureHandler(function(err) {
+            alert("Error updating status: " + (err.message || err));
+            loadData();
+          })
+          .updateTestimonialStatus(rowId, newStatus);
+      }
+    }
+
+    function openEditModal(rowId) {
+      const item = allTestimonials.find(t => t.rowId === rowId);
+      if (!item) return;
+
+      document.getElementById("edit-row-id").value = rowId;
+      document.getElementById("modal-extracted-quote").value = item.extractedQuote || item.testimonial || "";
+      document.getElementById("modal-tags").value = item.tags || "";
+      document.getElementById("edit-modal").classList.remove("hidden");
+    }
+
+    function closeEditModal() {
+      document.getElementById("edit-modal").classList.add("hidden");
+    }
+
+    function saveEditModal() {
+      const rowId = parseInt(document.getElementById("edit-row-id").value, 10);
+      const quote = document.getElementById("modal-extracted-quote").value.trim();
+      const tags = document.getElementById("modal-tags").value.trim();
+
+      const item = allTestimonials.find(t => t.rowId === rowId);
+      if (item) {
+        item.extractedQuote = quote;
+        item.tags = tags;
+      }
+      applyFilters();
+      closeEditModal();
+
+      if (typeof google !== "undefined" && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function() {
+            loadData();
+          })
+          .withFailureHandler(function(err) {
+            alert("Failed to save changes: " + (err.message || err));
+            loadData();
+          })
+          .updateTestimonialDetails(rowId, quote, tags);
+      }
+    }
+
+    function inspectDetail(rowId) {
+      const item = allTestimonials.find(t => t.rowId === rowId);
+      if (!item) return;
+
+      const body = document.getElementById("detail-modal-body");
+      body.innerHTML = `
+        <div class="flex items-center gap-3 pb-3 border-b border-outline-variant/30">
+          ${item.headshotUrl ? `<img src="${item.headshotUrl}" class="w-12 h-12 rounded-full object-cover">` : `<div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-base">${item.name.charAt(0)}</div>`}
+          <div>
+            <h4 class="font-bold text-sm text-on-surface">${item.name}</h4>
+            <p class="text-xs text-on-surface-variant">${item.organization || "No Organization"}</p>
+            <p class="text-xs text-outline">${item.email}</p>
+          </div>
+        </div>
+        <div>
+          <span class="font-semibold text-on-surface block mb-1">Full Testimonial:</span>
+          <div class="p-3 rounded-lg bg-surface-container-low text-on-surface leading-relaxed whitespace-pre-wrap">${item.testimonial}</div>
+        </div>
+        <div>
+          <span class="font-semibold text-on-surface block mb-1">Extracted Quote:</span>
+          <p class="italic text-primary">“${item.extractedQuote}”</p>
+        </div>
+        <div>
+          <span class="font-semibold text-on-surface block mb-1">Tags:</span>
+          <p class="text-on-surface-variant">${item.tags || "None"}</p>
+        </div>
+        <div>
+          <span class="font-semibold text-on-surface block mb-1">Submission Date:</span>
+          <p class="text-outline">${item.timestamp || "N/A"}</p>
+        </div>
+      `;
+
+      document.getElementById("detail-modal").classList.remove("hidden");
+    }
+
+    function closeDetailModal() {
+      document.getElementById("detail-modal").classList.add("hidden");
+    }
+
+    // Initial load
+    document.addEventListener("DOMContentLoaded", loadData);
+  </script>
+</body>
+</html>
+

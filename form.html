@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Submit Your Story | PraisePulse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+    .spinner {
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top: 2px solid white;
+      width: 16px;
+      height: 16px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3525cd",
+            "primary-container": "#4f46e5",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#dad7ff",
+            "primary-fixed": "#e2dfff",
+            "primary-fixed-dim": "#c3c0ff",
+            "secondary": "#855300",
+            "secondary-container": "#fea619",
+            "surface": "#faf8ff",
+            "surface-dim": "#d2d9f4",
+            "surface-bright": "#faf8ff",
+            "surface-variant": "#dae2fd",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f2f3ff",
+            "surface-container": "#eaedff",
+            "surface-container-high": "#e2e7ff",
+            "surface-container-highest": "#dae2fd",
+            "on-surface": "#131b2e",
+            "on-surface-variant": "#464555",
+            "outline": "#777587",
+            "outline-variant": "#c7c4d8",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6",
+            "background": "#faf8ff"
+          },
+          borderRadius: {
+            DEFAULT: "0.25rem",
+            lg: "0.5rem",
+            xl: "0.75rem",
+            full: "9999px"
+          },
+          spacing: {
+            "space-2xs": "0.25rem",
+            "space-xs": "0.5rem",
+            "space-sm": "0.75rem",
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "space-2xl": "3rem",
+            gutter: "1.5rem",
+            margin: "2rem"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background font-sans text-on-surface antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- Navigation Header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-surface-container-lowest/95 backdrop-blur-md shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+    <div class="h-16 max-w-7xl mx-auto px-margin flex items-center justify-between gap-gutter">
+      <div class="flex items-center gap-space-sm shrink-0">
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold text-sm shadow-sm">
+          TF
+        </div>
+        <span class="font-bold text-lg text-on-surface tracking-tight">TestimonialFlow</span>
+      </div>
+
+      <nav class="hidden md:flex items-center gap-space-xs">
+        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="?page=admin">Dashboard</a>
+        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="?page=wall">Wall of Love</a>
+        <a aria-current="page" class="px-space-md py-space-xs rounded-lg transition-colors bg-surface-container text-primary font-semibold text-sm" href="?page=form">Public Form</a>
+      </nav>
+
+      <div class="flex items-center gap-space-md shrink-0">
+        <button class="hidden sm:inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-surface-container-low text-on-surface hover:bg-surface-container text-sm font-semibold transition-colors" type="button" onclick="navigator.clipboard.writeText(window.location.href); alert('Form link copied to clipboard!');">
+          <span class="material-symbols-outlined text-[18px]">ios_share</span>
+          <span>Share Form</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="w-full pt-20 pb-16 bg-background flex-1 flex items-center justify-center">
+    <div class="relative w-full py-space-lg px-margin flex items-center justify-center">
+      
+      <!-- Decorative Background Aura -->
+      <div class="absolute inset-0 pointer-events-none overflow-hidden flex items-center justify-center">
+        <div class="w-[600px] h-[600px] rounded-full bg-primary-fixed/30 blur-3xl -translate-y-24"></div>
+        <div class="w-[450px] h-[450px] rounded-full bg-surface-variant/40 blur-2xl translate-x-48 translate-y-36"></div>
+      </div>
+
+      <div class="relative w-full max-w-[760px] mx-auto z-10">
+        
+        <div class="text-center mb-space-lg">
+          <span class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-surface-container text-primary text-xs font-semibold shadow-sm mb-space-xs">
+            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+            Verified Customer Feedback
+          </span>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-xl shadow-md p-space-md sm:p-space-xl md:p-space-2xl border border-outline-variant/30">
+          <div class="text-center pb-space-lg">
+            <h1 class="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">Share your experience</h1>
+            <p class="text-sm text-on-surface-variant mt-space-2xs max-w-lg mx-auto">
+              We'd love to hear how TestimonialFlow helped you or your team streamline customer advocacy.
+            </p>
+          </div>
+
+          <!-- Alert / Error message container -->
+          <div id="error-alert" class="hidden mb-space-md p-space-sm rounded-lg bg-error-container text-error text-sm font-medium flex items-center gap-2">
+            <span class="material-symbols-outlined text-[18px]">error</span>
+            <span id="error-message"></span>
+          </div>
+
+          <!-- Submission Form -->
+          <form class="space-y-space-lg" id="submission-form" onsubmit="event.preventDefault(); handleSubmit();">
+            
+            <!-- Rating Section -->
+            <div class="bg-surface-container-low p-space-md rounded-lg">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-xs mb-space-xs">
+                <label class="font-semibold text-sm text-on-surface">Overall Rating</label>
+                <span class="text-xs text-secondary font-medium" id="rating-label">5.0 • Exceptional!</span>
+              </div>
+              <div class="flex items-center gap-space-xs" id="star-container">
+                <button class="star-btn transition-transform hover:scale-110 focus:outline-none p-1 text-secondary-container" data-val="1" type="button">
+                  <span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </button>
+                <button class="star-btn transition-transform hover:scale-110 focus:outline-none p-1 text-secondary-container" data-val="2" type="button">
+                  <span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </button>
+                <button class="star-btn transition-transform hover:scale-110 focus:outline-none p-1 text-secondary-container" data-val="3" type="button">
+                  <span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </button>
+                <button class="star-btn transition-transform hover:scale-110 focus:outline-none p-1 text-secondary-container" data-val="4" type="button">
+                  <span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </button>
+                <button class="star-btn transition-transform hover:scale-110 focus:outline-none p-1 text-secondary-container" data-val="5" type="button">
+                  <span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Testimonial Content -->
+            <div>
+              <div class="flex items-center justify-between mb-space-xs">
+                <label class="font-semibold text-sm text-on-surface" for="review-content">
+                  Your Testimonial <span class="text-error font-medium">*</span>
+                </label>
+                <span class="text-xs text-outline" id="char-count">0 / 800</span>
+              </div>
+              <div class="relative">
+                <textarea 
+                  class="w-full bg-surface-container-low focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 rounded-lg p-space-md text-sm text-on-surface placeholder:text-outline focus:outline-none shadow-sm transition-all resize-y min-h-[130px] border border-outline-variant/40" 
+                  id="review-content" 
+                  maxlength="800" 
+                  placeholder="What did you like best about our product? How has it impacted your daily work or customer engagement?" 
+                  required 
+                  rows="4"></textarea>
+              </div>
+              <div class="mt-space-2xs flex items-center justify-between">
+                <p class="text-xs text-on-surface-variant flex items-center gap-space-2xs">
+                  <span class="material-symbols-outlined text-[16px] text-primary">tips_and_updates</span>
+                  Specific metrics and workflow highlights help others the most!
+                </p>
+              </div>
+            </div>
+
+            <!-- Headshot Upload -->
+            <div>
+              <label class="block font-semibold text-sm text-on-surface mb-space-xs">
+                Headshot or Profile Picture (Optional)
+              </label>
+              <div class="relative group rounded-xl p-space-lg flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-surface-container-low hover:bg-surface-container border-2 border-dashed border-outline-variant/60" id="dropzone">
+                <input accept="image/png, image/jpeg, image/webp" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" id="file-input" type="file">
+                
+                <div class="flex flex-col items-center" id="dropzone-empty">
+                  <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center text-primary mb-space-xs group-hover:scale-105 transition-transform">
+                    <span class="material-symbols-outlined text-[24px]">cloud_upload</span>
+                  </div>
+                  <p class="text-sm font-semibold text-on-surface">
+                    <span class="text-primary">Click to upload</span> or drag headshot here
+                  </p>
+                  <div class="mt-space-2xs flex items-center gap-space-xs">
+                    <span class="px-space-xs py-space-2xs rounded bg-surface-container-highest text-xs text-on-surface-variant">PNG, JPG, WebP</span>
+                    <span class="text-xs text-outline">• Resized automatically</span>
+                  </div>
+                </div>
+
+                <div class="hidden flex-col items-center gap-space-xs" id="dropzone-preview">
+                  <div class="relative w-16 h-16 rounded-full overflow-hidden shadow-sm border border-outline-variant">
+                    <img class="w-full h-full object-cover" id="avatar-preview-img" src="" alt="Headshot preview">
+                  </div>
+                  <div class="flex items-center gap-space-xs">
+                    <span class="text-xs text-on-surface font-medium truncate max-w-[200px]" id="preview-filename">avatar.jpg</span>
+                    <button class="p-1 rounded hover:bg-error-container text-error transition-colors" id="remove-img-btn" type="button">
+                      <span class="material-symbols-outlined text-[16px]">close</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Identity Fields -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+              <div>
+                <label class="block font-semibold text-sm text-on-surface mb-space-2xs" for="full-name">
+                  Full Name <span class="text-error font-medium">*</span>
+                </label>
+                <input class="w-full bg-surface-container-low focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 rounded-lg px-space-md py-space-sm text-sm text-on-surface placeholder:text-outline focus:outline-none shadow-sm transition-all border border-outline-variant/40" id="full-name" placeholder="e.g. Sarah Jenkins" required type="text">
+              </div>
+              <div>
+                <label class="block font-semibold text-sm text-on-surface mb-space-2xs" for="email">
+                  Email Address <span class="text-error font-medium">*</span>
+                </label>
+                <input class="w-full bg-surface-container-low focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 rounded-lg px-space-md py-space-sm text-sm text-on-surface placeholder:text-outline focus:outline-none shadow-sm transition-all border border-outline-variant/40" id="email" placeholder="sarah@acme.inc" required type="email">
+                <p class="text-xs text-on-surface-variant mt-space-2xs flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[14px] text-outline">lock</span>
+                  Kept strictly confidential • never shown publicly
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-space-2xs">
+                <label class="block font-semibold text-sm text-on-surface" for="org-role">
+                  Company & Role
+                </label>
+                <span class="text-xs text-outline">Optional</span>
+              </div>
+              <input class="w-full bg-surface-container-low focus:bg-surface-container-lowest focus:ring-2 focus:ring-primary/20 rounded-lg px-space-md py-space-sm text-sm text-on-surface placeholder:text-outline focus:outline-none shadow-sm transition-all border border-outline-variant/40" id="org-role" placeholder="e.g. Acme Corp • Head of Product" type="text">
+            </div>
+
+            <!-- Permission Checkbox -->
+            <div class="pt-space-xs">
+              <label class="flex items-start gap-space-sm cursor-pointer select-none group">
+                <div class="relative flex items-center mt-0.5">
+                  <input class="sr-only peer" id="permission-checkbox" required type="checkbox">
+                  <div class="w-5 h-5 rounded bg-surface-container-high peer-checked:bg-primary transition-all flex items-center justify-center text-on-primary">
+                    <span class="material-symbols-outlined text-[16px] font-bold opacity-0 peer-checked:opacity-100 transition-opacity">check</span>
+                  </div>
+                </div>
+                <span class="text-xs text-on-surface leading-normal">
+                  I grant permission to feature this testimonial on public marketing materials, websites, and the official TestimonialFlow Wall of Love.
+                </span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-space-sm">
+              <button class="w-full py-space-md px-space-xl rounded-lg bg-primary hover:bg-primary-container text-on-primary font-semibold text-sm flex items-center justify-center gap-space-xs shadow-md hover:shadow-lg transition-all active:scale-[0.99] disabled:opacity-60" id="submit-btn" type="submit">
+                <span id="btn-text">Submit Testimonial</span>
+                <span class="material-symbols-outlined text-[18px]" id="btn-icon">arrow_forward</span>
+              </button>
+            </div>
+          </form>
+
+          <!-- Success Banner -->
+          <div class="hidden text-center py-space-xl" id="success-banner">
+            <div class="w-16 h-16 rounded-full bg-surface-container-high text-primary mx-auto flex items-center justify-center mb-space-md">
+              <span class="material-symbols-outlined text-[36px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            </div>
+            <h2 class="text-2xl font-bold text-on-surface">Thank You So Much!</h2>
+            <p class="text-sm text-on-surface-variant mt-space-2xs max-w-md mx-auto">
+              Your story has been received and processed. We deeply appreciate you taking the time to share your experience with us!
+            </p>
+
+            <!-- Gemini AI Preview Card if available -->
+            <div id="ai-hook-preview" class="hidden mt-space-lg p-space-md bg-surface-container-low rounded-xl text-left border border-outline-variant/30">
+              <div class="flex items-center gap-1.5 text-xs font-semibold text-primary mb-1">
+                <span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+                <span>AI Extracted Highlight</span>
+              </div>
+              <p id="ai-hook-text" class="text-sm italic text-on-surface font-medium"></p>
+              <div id="ai-tags-container" class="mt-2 flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <button class="mt-space-lg px-space-md py-space-xs rounded-lg bg-surface-container text-on-surface font-semibold text-sm hover:bg-surface-container-high transition-colors" onclick="resetFormState()" type="button">
+              Submit another response
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="mt-space-lg flex flex-col sm:flex-row items-center justify-center gap-space-md text-center text-xs text-on-surface-variant">
+          <div class="flex items-center gap-space-2xs">
+            <span class="material-symbols-outlined text-[16px] text-primary">security</span>
+            <span>Enterprise-grade privacy compliant</span>
+          </div>
+          <span class="hidden sm:inline">•</span>
+          <div class="flex items-center gap-space-2xs">
+            <span class="material-symbols-outlined text-[16px] text-primary">speed</span>
+            <span>Takes under 90 seconds</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full bg-surface-container-lowest py-space-md shadow-[0_-1px_6px_rgba(0,0,0,0.02)] border-t border-outline-variant/20">
+    <div class="max-w-7xl mx-auto px-margin flex flex-col sm:flex-row items-center justify-between gap-space-md text-center sm:text-left">
+      <p class="text-xs text-on-surface-variant">© 2024 TestimonialFlow Inc. All rights reserved.</p>
+      <div class="flex items-center gap-space-lg">
+        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="?page=wall">Wall of Love</a>
+        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="?page=admin">Admin Moderation</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Client-Side JavaScript -->
+  <script>
+    (function initInteractiveForm() {
+      let currentRating = 5;
+      let uploadedFile = null;
+
+      const ratingLabels = {
+        1: "1.0 • Poor",
+        2: "2.0 • Fair",
+        3: "3.0 • Good",
+        4: "4.0 • Great experience",
+        5: "5.0 • Exceptional!"
+      };
+
+      const stars = document.querySelectorAll(".star-btn");
+      const labelSpan = document.getElementById("rating-label");
+
+      function renderStars(val) {
+        stars.forEach((star) => {
+          const starVal = parseInt(star.getAttribute("data-val"), 10);
+          if (starVal <= val) {
+            star.classList.remove("text-surface-container-highest");
+            star.classList.add("text-secondary-container");
+          } else {
+            star.classList.remove("text-secondary-container");
+            star.classList.add("text-surface-container-highest");
+          }
+        });
+        if (labelSpan && ratingLabels[val]) {
+          labelSpan.textContent = ratingLabels[val];
+        }
+      }
+
+      stars.forEach((star) => {
+        star.addEventListener("click", () => {
+          currentRating = parseInt(star.getAttribute("data-val"), 10);
+          renderStars(currentRating);
+        });
+        star.addEventListener("mouseenter", () => {
+          const hoverVal = parseInt(star.getAttribute("data-val"), 10);
+          renderStars(hoverVal);
+        });
+      });
+
+      const starContainer = document.getElementById("star-container");
+      if (starContainer) {
+        starContainer.addEventListener("mouseleave", () => {
+          renderStars(currentRating);
+        });
+      }
+
+      // Character count tracking
+      const textarea = document.getElementById("review-content");
+      const charCounter = document.getElementById("char-count");
+      if (textarea && charCounter) {
+        textarea.addEventListener("input", () => {
+          const len = textarea.value.length;
+          charCounter.textContent = `${len} / 800`;
+        });
+      }
+
+      // File upload handling & client-side compression
+      const fileInput = document.getElementById("file-input");
+      const dropzoneEmpty = document.getElementById("dropzone-empty");
+      const dropzonePreview = document.getElementById("dropzone-preview");
+      const previewFilename = document.getElementById("preview-filename");
+      const avatarPreviewImg = document.getElementById("avatar-preview-img");
+      const removeImgBtn = document.getElementById("remove-img-btn");
+
+      function processImageFile(file) {
+        if (!file.type.match(/image.*/)) {
+          alert("Please select a valid image file.");
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            // Resize / compress to maximum 400x400 for optimal headshot display
+            const canvas = document.createElement("canvas");
+            const maxDim = 400;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxDim) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              }
+            } else {
+              if (height > maxDim) {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            const compressedBase64 = canvas.toDataURL("image/jpeg", 0.85);
+
+            uploadedFile = {
+              name: file.name,
+              type: "image/jpeg",
+              base64: compressedBase64
+            };
+
+            if (avatarPreviewImg) avatarPreviewImg.src = compressedBase64;
+            if (previewFilename) previewFilename.textContent = file.name;
+            if (dropzoneEmpty) dropzoneEmpty.classList.add("hidden");
+            if (dropzonePreview) {
+              dropzonePreview.classList.remove("hidden");
+              dropzonePreview.classList.add("flex");
+            }
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      if (fileInput) {
+        fileInput.addEventListener("change", (e) => {
+          if (e.target.files && e.target.files[0]) {
+            processImageFile(e.target.files[0]);
+          }
+        });
+      }
+
+      if (removeImgBtn) {
+        removeImgBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          uploadedFile = null;
+          if (fileInput) fileInput.value = "";
+          if (dropzonePreview) {
+            dropzonePreview.classList.add("hidden");
+            dropzonePreview.classList.remove("flex");
+          }
+          if (dropzoneEmpty) dropzoneEmpty.classList.remove("hidden");
+        });
+      }
+
+      // Submission logic
+      window.handleSubmit = function() {
+        const errorAlert = document.getElementById("error-alert");
+        const errorMessage = document.getElementById("error-message");
+        if (errorAlert) errorAlert.classList.add("hidden");
+
+        const submitBtn = document.getElementById("submit-btn");
+        const btnText = document.getElementById("btn-text");
+        const btnIcon = document.getElementById("btn-icon");
+
+        const name = document.getElementById("full-name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const organization = document.getElementById("org-role").value.trim();
+        const testimonial = document.getElementById("review-content").value.trim();
+
+        if (!name || !email || !testimonial) {
+          if (errorMessage) errorMessage.textContent = "Please fill in all required fields.";
+          if (errorAlert) errorAlert.classList.remove("hidden");
+          return;
+        }
+
+        // Set Loading State
+        submitBtn.disabled = true;
+        btnText.textContent = "Analyzing & Submitting...";
+        btnIcon.className = "spinner";
+
+        const payload = {
+          name: name,
+          email: email,
+          organization: organization,
+          rating: currentRating,
+          testimonial: testimonial,
+          headshot: uploadedFile
+        };
+
+        if (typeof google !== "undefined" && google.script && google.script.run) {
+          google.script.run
+            .withSuccessHandler(function(response) {
+              submitBtn.disabled = false;
+              btnText.textContent = "Submit Testimonial";
+              btnIcon.className = "material-symbols-outlined text-[18px]";
+              btnIcon.textContent = "arrow_forward";
+
+              if (response && response.success) {
+                showSuccess(response);
+              } else {
+                if (errorMessage) errorMessage.textContent = (response && response.error) ? response.error : "Submission failed.";
+                if (errorAlert) errorAlert.classList.remove("hidden");
+              }
+            })
+            .withFailureHandler(function(err) {
+              submitBtn.disabled = false;
+              btnText.textContent = "Submit Testimonial";
+              btnIcon.className = "material-symbols-outlined text-[18px]";
+              btnIcon.textContent = "arrow_forward";
+
+              if (errorMessage) errorMessage.textContent = "Server error: " + (err.message || err);
+              if (errorAlert) errorAlert.classList.remove("hidden");
+            })
+            .submitTestimonial(payload);
+        } else {
+          // Local/preview fallback simulation
+          setTimeout(function() {
+            submitBtn.disabled = false;
+            btnText.textContent = "Submit Testimonial";
+            btnIcon.className = "material-symbols-outlined text-[18px]";
+            btnIcon.textContent = "arrow_forward";
+            showSuccess({
+              success: true,
+              extractedQuote: testimonial.slice(0, 100) + '...',
+              tags: 'Productivity, AI Tools'
+            });
+          }, 1200);
+        }
+      };
+
+      function showSuccess(response) {
+        const form = document.getElementById("submission-form");
+        const successBanner = document.getElementById("success-banner");
+        if (form && successBanner) {
+          form.classList.add("hidden");
+          successBanner.classList.remove("hidden");
+        }
+
+        // Render AI quote preview if present
+        if (response && response.extractedQuote) {
+          const previewCard = document.getElementById("ai-hook-preview");
+          const hookText = document.getElementById("ai-hook-text");
+          const tagsContainer = document.getElementById("ai-tags-container");
+
+          if (previewCard && hookText) {
+            hookText.textContent = `“${response.extractedQuote}”`;
+            if (tagsContainer && response.tags) {
+              tagsContainer.innerHTML = "";
+              const tags = response.tags.split(",");
+              tags.forEach(tag => {
+                const span = document.createElement("span");
+                span.className = "px-2 py-0.5 rounded-full bg-surface-container text-xs font-medium text-primary";
+                span.textContent = tag.trim();
+                tagsContainer.appendChild(span);
+              });
+            }
+            previewCard.classList.remove("hidden");
+          }
+        }
+      }
+
+      window.resetFormState = function() {
+        const form = document.getElementById("submission-form");
+        const successBanner = document.getElementById("success-banner");
+        if (form && successBanner) {
+          form.reset();
+          uploadedFile = null;
+          if (charCounter) charCounter.textContent = "0 / 800";
+          if (dropzonePreview) {
+            dropzonePreview.classList.add("hidden");
+            dropzonePreview.classList.remove("flex");
+          }
+          if (dropzoneEmpty) dropzoneEmpty.classList.remove("hidden");
+          currentRating = 5;
+          renderStars(5);
+          form.classList.remove("hidden");
+          successBanner.classList.add("hidden");
+          const previewCard = document.getElementById("ai-hook-preview");
+          if (previewCard) previewCard.classList.add("hidden");
+        }
+      };
+
+      // Set initial rating to 5 stars
+      renderStars(5);
+    })();
+  </script>
+</body>
+</html>
+
