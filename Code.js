@@ -32,6 +32,30 @@ function setAdminEmail(email) {
 }
 
 /**
+ * Test function you can run directly from the Apps Script editor toolbar to:
+ * 1. Authorize the MailApp permission scope (Google will pop up "Authorization Required" on first run)
+ * 2. Verify that email sending works and check your inbox
+ */
+function testSendEmail() {
+  const config = getConfig();
+  const recipient = config.adminEmail || Session.getEffectiveUser().getEmail();
+  Logger.log('Sending test email to: ' + recipient);
+
+  sendEmailNotification({
+    rowId: 999,
+    name: 'Sharon (Test Submission)',
+    email: recipient,
+    organization: 'PraisePulse Admin',
+    rating: 5,
+    testimonial: 'This is a test submission to verify that email delivery, Gemini formatting, and dashboard links are working properly.',
+    extractedQuote: 'Verification test: Email delivery is working properly!',
+    tags: 'Verification, System Test'
+  });
+
+  Logger.log('Test email successfully dispatched to ' + recipient);
+}
+
+/**
  * Configuration helper to retrieve script properties
  */
 function getConfig() {

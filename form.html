@@ -544,18 +544,16 @@
             })
             .submitTestimonial(payload);
         } else {
-          // Local/preview fallback simulation
-          setTimeout(function() {
-            submitBtn.disabled = false;
-            btnText.textContent = "Submit Testimonial";
-            btnIcon.className = "material-symbols-outlined text-[18px]";
-            btnIcon.textContent = "arrow_forward";
-            showSuccess({
-              success: true,
-              extractedQuote: testimonial.slice(0, 100) + '...',
-              tags: 'Productivity, AI Tools'
-            });
-          }, 1200);
+          // Running outside Apps Script (e.g. locally in a browser or live server)
+          submitBtn.disabled = false;
+          btnText.textContent = "Submit Testimonial";
+          btnIcon.className = "material-symbols-outlined text-[18px]";
+          btnIcon.textContent = "arrow_forward";
+          alert(
+            "Notice: You opened this form as a local file (file://) on your computer.\n\n" +
+            "To send data to your Google Sheet and receive email notifications, please open your deployed Apps Script Web App URL:\n" +
+            "https://script.google.com/macros/s/AKfycbwfUEh9zBMCA5vsJTEEZAAzCuIDXsP6xY5fqpU7hD2ikGuqA4U3_1ujMjoxqunwt1f1/exec"
+          );
         }
       };
 
