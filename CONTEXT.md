@@ -7,10 +7,17 @@
 ### Current Status
 - **Core Implementation**: Fully functional across all 5 operational layers.
 - **Runtime Environment**: Google Apps Script (V8 runtime), deployed as a Web App with query-parameter routing (`?page=form|admin|wall`).
-- **Database**: Google Sheets (`Testimonials` sheet).
-- **Media Asset Storage**: Google Drive folder for headshot images with public thumbnail view links.
+- **Database**: Google Sheets (`Testimonials` sheet) with robust standalone spreadsheet resolution.
+- **Media Asset Storage**: Google Drive folder for headshot images rendered reliably via `https://lh3.googleusercontent.com/d/FILE_ID` CDN endpoints with graceful initial-badge fallbacks.
 - **AI Processing**: Google Gemini API (`gemini-2.5-flash`) for automated high-impact quote extraction and tag categorization.
 - **Notifications**: Dual notification pipeline featuring Google Chat Webhooks (Cards V2) and direct email alerts (`MailApp`) to the administrator upon each submission.
+- **Cross-Page Navigation**: All top-level navigation links escape sandboxed iframes via `<base target="_top">` and full canonical deployment URLs.
+- **Wall of Love**: Infinite spinner resolved; testimonials preloaded server-side via `<?!= JSON.stringify(getApprovedTestimonials()) ?>` with zero render delay.
+- **Live Deployment**:
+  - **Deployment ID**: `AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R` (@ Version 15)
+  - **Admin Dashboard**: `https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=admin`
+  - **Public Form**: `https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=form`
+  - **Wall of Love**: `https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=wall`
 
 ---
 
@@ -18,11 +25,11 @@
 
 | File | Primary Role | Key Capabilities & Current State |
 |---|---|---|
-| [`Code.js`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/Code.js) | Backend Engine & API Layer | • `doGet(e)`: Routes traffic to `form.html`, `admin.html`, or `wall.html`.<br>• `submitTestimonial(data)`: Orchestrates headshot upload, Gemini extraction, Sheet row persistence, and notification dispatch.<br>• `callGeminiAPI(text)`: Prompts `gemini-2.5-flash` for JSON-structured quotes and tags.<br>• `uploadHeadshotToDrive(base64, name)`: Saves resized headshots to designated Drive folder.<br>• `sendAdminEmailNotification(data)`: Delivers formatted email summaries to the admin.<br>• `getTestimonials()`, `updateStatus()`, `updateGeminiData()`: Admin management APIs.<br>• `getApprovedTestimonials()`: Public read API with email scrubbing.<br>• `authorizeEmail()`: Utility to trigger Apps Script OAuth consent dialog. |
-| [`form.html`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/form.html) | Public Submission Form | • Modern responsive UI (Tailwind CSS, Plus Jakarta Sans).<br>• Interactive 5-star rating with real-time sentiment status text.<br>• HTML5 `<canvas>` client-side image compression (max 400x400px, JPEG 0.8 quality).<br>• Character counter and privacy/consent checkboxes.<br>• Success modal displaying the instant AI-extracted quote preview. |
-| [`admin.html`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/admin.html) | Moderation Dashboard | • Real-time KPI bento metrics (Total, Pending, Approved, Avg Rating).<br>• Search and filter bar (filter by rating, status, or search terms).<br>• One-click status toggling (`Approve`, `Reject`, `Pending`).<br>• Inline modal for manual editing of Gemini quote and tags.<br>• Submitter inspection modal with full unedited text. |
-| [`wall.html`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/wall.html) | Embeddable Wall of Love | • Responsive 3-column testimonial card grid.<br>• Dynamic tag filter pills generated on-the-fly with counts.<br>• Embed code generator producing an iframe snippet for external sites.<br>• Zero private information exposed (emails omitted from API output). |
-| [`appsscript.json`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/appsscript.json) | Script Manifest | Explicit OAuth scopes configured:<br>• `script.send_mail`<br>• `spreadsheets`<br>• `drive`<br>• `script.external_request`<br>• `userinfo.email` |
+| [`Code.js`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/Code.js) | Backend Engine & API Layer | • `doGet(e)`: Routes traffic to `form.html`, `admin.html`, or `wall.html`.<br>• `submitTestimonial(data)`: Orchestrates headshot upload, Gemini extraction, Sheet row persistence, and notification dispatch.<br>• `callGeminiAPI(text)`: Prompts `gemini-2.5-flash` for JSON-structured quotes and tags.<br>• `saveHeadshot(base64, name)`: Saves resized headshots to Drive and returns `https://lh3.googleusercontent.com/d/FILE_ID` CDN link.<br>• `formatDriveImageUrl(url)`: Normalizes legacy `drive.google.com/uc?export=view` URLs into direct `lh3` links.<br>• `sendAdminEmailNotification(data)`: Delivers formatted email summaries to the admin.<br>• `getTestimonials()`, `updateStatus()`, `updateGeminiData()`: Admin management APIs.<br>• `getApprovedTestimonials()`: Public read API with email scrubbing and safe date parsing.<br>• `getTestimonialsSheet()`: Fallback handling when `getActiveSpreadsheet()` returns null in standalone web apps.<br>• `authorizeEmail()`: Utility to trigger Apps Script OAuth consent dialog. |
+| [`form.html`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/form.html) | Public Submission Form | • Modern responsive UI (Tailwind CSS, Plus Jakarta Sans).<br>• `<base target="_top">` and canonical navigation links.<br>• Interactive 5-star rating with real-time sentiment status text.<br>• HTML5 `<canvas>` client-side image compression (max 400x400px, JPEG 0.8 quality).<br>• Character counter and privacy/consent checkboxes.<br>• Success modal displaying the instant AI-extracted quote preview and clean canonical share URL. |
+| [`admin.html`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/admin.html) | Moderation Dashboard | • Real-time KPI bento metrics (Total, Pending, Approved, Avg Rating).<br>• `<base target="_top">` and canonical navigation/action links.<br>• Search and filter bar (filter by rating, status, or search terms).<br>• One-click status toggling (`Approve`, `Reject`, `Pending`).<br>• Inline modal for manual editing of Gemini quote and tags.<br>• Submitter inspection modal with full unedited text.<br>• Avatar `onerror` fallback to initial-letter badge. |
+| [`wall.html`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/wall.html) | Embeddable Wall of Love | • Responsive 3-column testimonial card grid with zero-delay server-side preloading via `<?!= JSON.stringify(getApprovedTestimonials()) ?>`.<br>• Escaped script literal URLs avoiding GAS template parser comment-stripping bug.<br>• Avatar `onerror` fallback to initial-letter badge.<br>• Dynamic tag filter pills generated on-the-fly with counts.<br>• Embed code generator producing an iframe snippet for external sites.<br>• Zero private information exposed (emails omitted from API output). |
+| [`appsscript.json`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/appsscript.json) | Script Manifest | Explicit OAuth scopes and Web App configuration:<br>• `webapp`: `access: ANYONE_ANONYMOUS`, `executeAs: USER_DEPLOYING`<br>• `script.send_mail`<br>• `spreadsheets`<br>• `drive`<br>• `script.external_request`<br>• `userinfo.email` |
 | [`spec.md`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/spec.md) | Technical Specification | Comprehensive project requirements, API contracts, and schema definitions. |
 | [`README.md`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/README.md) | Setup & Deployment Guide | Documentation for deployment, script properties, and operational architecture. |
 | [`.agents/skills/save-progress/SKILL.md`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/.agents/skills/save-progress/SKILL.md) | Workspace Skill (`/saveProgress`) | Standardizes reviewing the active session, checking git diffs, and updating `CONTEXT.md`. |
@@ -33,8 +40,12 @@
 ## 3. Git History & Uncommitted Changes
 
 ### Recent Commit Log
+- `767131f`: Add avatar onerror fallback in wall.html.
+- `75926a6`: Update CONTEXT.md with version 15 deployment log.
 - `0247524`: Fix Google Drive headshot URLs to direct lh3 CDN format with fallbacks (Version 15).
+- `0f41e90`: Update CONTEXT.md with version 14 deployment.
 - `663eb3e`: Fix script URL parsing and enable server-side preloading (Version 14).
+- `3ff2c97`: Update CONTEXT.md with version 13 deployment.
 - `a736c12`: Fix standalone spreadsheet init and wall empty state handling (Version 13).
 - `457fe5e`: Make getApprovedTestimonials robust and fix wall load timing (Version 12).
 - `1e37dc8`: Update CONTEXT.md with version 11 deployment.
@@ -52,7 +63,7 @@
 
 ### Current Working Directory State
 - Working tree clean: All changes committed and pushed to remote `origin/main`.
-- Google Apps Script cloud deployment synchronized via `clasp push`.
+- Google Apps Script cloud deployment synchronized via `clasp push` (Live Version 15).
 
 ---
 
@@ -71,6 +82,14 @@
    - A single Google Apps Script deployment services all three interfaces via `?page=form` (default), `?page=admin`, and `?page=wall`, simplifying deployment updates.
 6. **Workspace-Scoped Agent Skills**:
    - Standard Antigravity agent discovery path `.agents/skills/` is used to create local, project-bound skills (`/saveProgress` and `/pushAll`) without polluting global machine configurations.
+7. **Google Apps Script HTML Template `//` Comment Stripping Workaround**:
+   - Inside `<script>` blocks in GAS templates evaluated by `HtmlService.createTemplateFromFile().evaluate()`, literal `//` within strings (e.g. `"https://..."`) is treated as a comment by the template preprocessor and strips the rest of the line. URLs are escaped or split (e.g., `"https:" + "\x2F\x2F" + ...`) to avoid breaking JavaScript execution.
+8. **Direct CDN Hosting for Drive Media (`lh3.googleusercontent.com/d/FILE_ID`)**:
+   - Google Drive direct embed URLs (`uc?export=view&id=...`) are blocked/restricted by Drive's CSP/CORS changes. Direct `lh3.googleusercontent.com/d/` URLs are used for high-performance, unrestricted public image rendering, backed by client-side `onerror` fallbacks to initial-letter badges.
+9. **Explicit Web App Manifest Configuration**:
+   - `appsscript.json` requires explicit `"webapp"` specification (`access: ANYONE_ANONYMOUS`, `executeAs: USER_DEPLOYING`) to prevent clasp deployments from falling back to non-executable API versions (which caused 404 errors).
+10. **Top-Level Navigation Sandbox Escaping**:
+    - All HTML interfaces include `<base target="_top">` and absolute canonical execution URLs to ensure navigation between `?page=form`, `?page=admin`, and `?page=wall` cleanly escapes Google's sandboxed iframe container.
 
 ---
 
@@ -93,4 +112,3 @@ The application relies on the following Google Apps Script Script Properties (`P
 1. **Abuse Prevention**: Introduce honeypot fields or simple anti-spam checks in `form.html` to avoid automated spam submissions.
 2. **Admin Authentication**: Restrict access to `?page=admin` by verifying whether `Session.getActiveUser().getEmail()` matches an authorized administrator.
 3. **Digest Mode for High Volume**: Provide an option for daily/weekly email digests rather than per-submission emails if submission frequency grows.
-
