@@ -22,6 +22,16 @@ const HEADERS = [
 ];
 
 /**
+ * Utility helper to set the admin email property directly from the Apps Script editor
+ * (Run this function once with your desired email, or set ADMIN_EMAIL in Project Settings > Script Properties)
+ */
+function setAdminEmail(email) {
+  const targetEmail = email || Session.getEffectiveUser().getEmail();
+  PropertiesService.getScriptProperties().setProperty('ADMIN_EMAIL', targetEmail);
+  Logger.log('ADMIN_EMAIL set to: ' + targetEmail);
+}
+
+/**
  * Configuration helper to retrieve script properties
  */
 function getConfig() {
