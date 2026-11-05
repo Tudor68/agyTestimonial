@@ -22,6 +22,18 @@ const HEADERS = [
 ];
 
 /**
+ * ONE-TIME AUTHORIZATION TRIGGER
+ * Running this function forces Google Apps Script to show the OAuth popup
+ * so you can click "Review permissions" and "Allow".
+ * (Do not wrap this in try/catch so Apps Script intercepts it for authorization).
+ */
+function authorizeEmail() {
+  const email = Session.getEffectiveUser().getEmail();
+  MailApp.sendEmail(email, "PraisePulse Email Authorization", "Email permissions successfully authorized for PraisePulse!");
+  Logger.log("Authorization email sent to " + email);
+}
+
+/**
  * Utility helper to set the admin email property directly from the Apps Script editor
  * (Run this function once with your desired email, or set ADMIN_EMAIL in Project Settings > Script Properties)
  */
