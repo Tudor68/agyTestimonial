@@ -234,9 +234,20 @@
   <!-- Script -->
   <script>
     let approvedTestimonials = [];
+    try {
+      approvedTestimonials = <?!= JSON.stringify(getApprovedTestimonials()) ?>;
+    } catch (e) {
+      approvedTestimonials = [];
+    }
     let currentFilter = "all";
 
     function loadWall() {
+      // If server-side preloaded testimonials are present, render them immediately
+      if (Array.isArray(approvedTestimonials) && approvedTestimonials.length > 0) {
+        renderWall(approvedTestimonials);
+        return;
+      }
+
       const grid = document.getElementById("card-grid");
       if (grid && !grid.innerHTML.includes("spinner")) {
         grid.innerHTML = `
@@ -497,7 +508,7 @@
       const codeSnippet = document.getElementById("embed-code-snippet");
 
       // Canonical embed code
-      const currentUrl = "https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=wall";
+      const currentUrl = "https:" + "\x2F\x2F" + "script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=wall";
       if (codeSnippet) {
         codeSnippet.textContent = `<iframe src="${currentUrl}" width="100%" height="800" frameborder="0" style="border:none;border-radius:12px;"></iframe>`;
       }
