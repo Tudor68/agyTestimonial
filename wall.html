@@ -448,7 +448,10 @@
       grid.innerHTML = filtered.map(item => {
         const stars = "★".repeat(Number(item.rating) || 5) + "☆".repeat(Math.max(0, 5 - (Number(item.rating) || 5)));
         const avatar = item.headshotUrl ?
-          `<img src="${item.headshotUrl}" class="w-12 h-12 rounded-full object-cover shrink-0 ring-2 ring-surface-container shadow-sm" alt="${item.name}">` :
+          `<div class="relative w-12 h-12 shrink-0">
+             <img src="${item.headshotUrl}" class="w-12 h-12 rounded-full object-cover ring-2 ring-surface-container shadow-sm" alt="${item.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+             <div style="display:none;" class="w-12 h-12 rounded-full bg-primary/10 text-primary items-center justify-center font-bold text-sm ring-2 ring-surface-container">${item.name ? item.name.charAt(0).toUpperCase() : 'A'}</div>
+           </div>` :
           `<div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-sm shrink-0 ring-2 ring-surface-container">${item.name ? item.name.charAt(0).toUpperCase() : 'A'}</div>`;
 
         const tagsHtml = (item.tags || []).map(t => `<span class="px-space-xs py-0.5 rounded text-[11px] font-medium bg-surface-container text-on-surface-variant">#${t}</span>`).join(" ");
