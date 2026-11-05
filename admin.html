@@ -458,7 +458,10 @@
       tbody.innerHTML = items.map(item => {
         const stars = "★".repeat(Number(item.rating) || 5) + "☆".repeat(Math.max(0, 5 - (Number(item.rating) || 5)));
         const avatar = item.headshotUrl ? 
-          `<img src="${item.headshotUrl}" class="w-9 h-9 rounded-full object-cover shrink-0 shadow-sm border border-outline-variant/40" alt="${item.name}">` :
+          `<div class="relative w-9 h-9 shrink-0">
+             <img src="${item.headshotUrl}" class="w-9 h-9 rounded-full object-cover shadow-sm border border-outline-variant/40" alt="${item.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+             <div style="display:none;" class="w-9 h-9 rounded-full bg-primary/10 text-primary items-center justify-center font-bold text-xs">${item.name ? item.name.charAt(0).toUpperCase() : 'A'}</div>
+           </div>` :
           `<div class="w-9 h-9 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">${item.name ? item.name.charAt(0).toUpperCase() : 'A'}</div>`;
 
         const tagsList = (item.tags || "").split(",").map(t => t.trim()).filter(Boolean);
@@ -618,7 +621,12 @@
       const body = document.getElementById("detail-modal-body");
       body.innerHTML = `
         <div class="flex items-center gap-3 pb-3 border-b border-outline-variant/30">
-          ${item.headshotUrl ? `<img src="${item.headshotUrl}" class="w-12 h-12 rounded-full object-cover">` : `<div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-base">${item.name.charAt(0)}</div>`}
+          ${item.headshotUrl ? `
+            <div class="relative w-12 h-12 shrink-0">
+              <img src="${item.headshotUrl}" class="w-12 h-12 rounded-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+              <div style="display:none;" class="w-12 h-12 rounded-full bg-primary/10 text-primary items-center justify-center font-bold text-base">${item.name ? item.name.charAt(0).toUpperCase() : 'A'}</div>
+            </div>` : 
+            `<div class="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-base">${item.name ? item.name.charAt(0).toUpperCase() : 'A'}</div>`}
           <div>
             <h4 class="font-bold text-sm text-on-surface">${item.name}</h4>
             <p class="text-xs text-on-surface-variant">${item.organization || "No Organization"}</p>

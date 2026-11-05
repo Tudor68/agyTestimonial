@@ -219,8 +219,27 @@ function saveHeadshot(fileData) {
   const file = folder.createFile(blob);
   file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   
-  // Return direct thumbnail/view URL suitable for <img> tags
-  return 'https://drive.google.com/uc?export=view&id=' + file.getId();
+  // Return direct image CDN URL suitable for <img> tags
+  return 'https://lh3.googleusercontent.com/d/' + file.getId();
+}
+
+/**
+ * Normalizes Google Drive file URLs into direct image CDN URLs (lh3.googleusercontent.com)
+ * @param {string} url
+ * @return {string}
+ */
+function formatDriveImageUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  url = url.trim();
+  const idMatch = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (idMatch && idMatch[1]) {
+    return 'https://lh3.googleusercontent.com/d/' + idMatch[1];
+  }
+  const dMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (dMatch && dMatch[1]) {
+    return 'https://lh3.googleusercontent.com/d/' + dMatch[1];
+  }
+  return url;
 }
 
 /**
@@ -624,7 +643,7 @@ function getApprovedTestimonials() {
           testimonial: row[colIndex.testimonial] || '',
           extractedQuote: row[colIndex.extractedQuote] || '',
           tags: tagsArray,
-          headshotUrl: row[colIndex.headshotUrl] || '',
+          headshotUrl: formatDriveImageUrl(row[colIndex.headshotUrl] || ''),
           timestamp: formattedDate
         });
       }
@@ -673,7 +692,7 @@ function getAdminTestimonials() {
       organization: row[3] || '',
       rating: rating,
       testimonial: row[5] || '',
-      headshotUrl: row[6] || '',
+      headshotUrl: formatDriveImageUrl(row[6] || ''),
       extractedQuote: row[7] || '',
       tags: row[8] || '',
       status: status
