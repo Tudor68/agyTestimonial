@@ -33,6 +33,7 @@
 ## 3. Git History & Uncommitted Changes
 
 ### Recent Commit Log
+- `0247524`: Fix Google Drive headshot URLs to direct lh3 CDN format with fallbacks (Version 15).
 - `663eb3e`: Fix script URL parsing and enable server-side preloading (Version 14).
 - `a736c12`: Fix standalone spreadsheet init and wall empty state handling (Version 13).
 - `457fe5e`: Make getApprovedTestimonials robust and fix wall load timing (Version 12).
