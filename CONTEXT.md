@@ -33,6 +33,7 @@
 ## 3. Git History & Uncommitted Changes
 
 ### Recent Commit Log
+- `a736c12`: Fix standalone spreadsheet init and wall empty state handling (Version 13).
 - `457fe5e`: Make getApprovedTestimonials robust and fix wall load timing (Version 12).
 - `1e37dc8`: Update CONTEXT.md with version 11 deployment.
 - `a70ac8b`: Configure webapp in appsscript.json manifest (Version 11).
