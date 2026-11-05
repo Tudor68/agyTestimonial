@@ -541,51 +541,75 @@ function submitTestimonial(formObject) {
  * @return {Array<Object>} Approved testimonials
  */
 function getApprovedTestimonials() {
-  const sheet = getTestimonialsSheet();
-  const data = sheet.getDataRange().getValues();
-  if (data.length <= 1) return [];
+  try {
+    const sheet = getTestimonialsSheet();
+    const data = sheet.getDataRange().getValues();
+    if (!data || data.length <= 1) return [];
 
-  const headers = data[0];
-  const colIndex = {
-    timestamp: headers.indexOf('Timestamp'),
-    name: headers.indexOf('Name'),
-    organization: headers.indexOf('Organization'),
-    rating: headers.indexOf('Rating'),
-    testimonial: headers.indexOf('Testimonial'),
-    headshotUrl: headers.indexOf('Headshot_URL'),
-    extractedQuote: headers.indexOf('Extracted_Quote'),
-    tags: headers.indexOf('Tags'),
-    status: headers.indexOf('Status')
-  };
-
-  const results = [];
-  for (let i = 1; i < data.length; i++) {
-    const row = data[i];
-    const status = row[colIndex.status];
-
-    if (String(status).toLowerCase() === 'approved') {
-      // Tags can be comma-separated string
-      const rawTags = row[colIndex.tags] || '';
-      const tagsArray = String(rawTags)
-        .split(',')
-        .map(t => t.trim())
-        .filter(Boolean);
-
-      results.push({
-        id: i + 1, // 1-based sheet row index
-        name: row[colIndex.name] || 'Anonymous',
-        organization: row[colIndex.organization] || '',
-        rating: Number(row[colIndex.rating]) || 5,
-        testimonial: row[colIndex.testimonial] || '',
-        extractedQuote: row[colIndex.extractedQuote] || '',
-        tags: tagsArray,
-        headshotUrl: row[colIndex.headshotUrl] || '',
-        timestamp: row[colIndex.timestamp] ? Utilities.formatDate(new Date(row[colIndex.timestamp]), Session.getScriptTimeZone(), 'MMM d, yyyy') : ''
-      });
+    const headers = data[0].map(h => String(h || '').trim().toLowerCase().replace(/[_\s]+/g, ''));
+    function findCol(name, defaultIdx) {
+      const target = name.toLowerCase().replace(/[_\s]+/g, '');
+      const idx = headers.indexOf(target);
+      return idx >= 0 ? idx : defaultIdx;
     }
-  }
 
-  return results;
+    const colIndex = {
+      timestamp: findCol('timestamp', 0),
+      name: findCol('name', 1),
+      organization: findCol('organization', 3),
+      rating: findCol('rating', 4),
+      testimonial: findCol('testimonial', 5),
+      headshotUrl: findCol('headshoturl', 6),
+      extractedQuote: findCol('extractedquote', 7),
+      tags: findCol('tags', 8),
+      status: findCol('status', 9)
+    };
+
+    const results = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      const status = String(row[colIndex.status] || '').trim().toLowerCase();
+
+      if (status === 'approved') {
+        const rawTags = row[colIndex.tags] || '';
+        const tagsArray = String(rawTags)
+          .split(',')
+          .map(t => t.trim())
+          .filter(Boolean);
+
+        let formattedDate = '';
+        if (row[colIndex.timestamp]) {
+          try {
+            const d = new Date(row[colIndex.timestamp]);
+            if (!isNaN(d.getTime())) {
+              formattedDate = Utilities.formatDate(d, Session.getScriptTimeZone(), 'MMM d, yyyy');
+            } else {
+              formattedDate = String(row[colIndex.timestamp]);
+            }
+          } catch (e) {
+            formattedDate = String(row[colIndex.timestamp]);
+          }
+        }
+
+        results.push({
+          id: i + 1, // 1-based sheet row index
+          name: row[colIndex.name] || 'Anonymous',
+          organization: row[colIndex.organization] || '',
+          rating: Number(row[colIndex.rating]) || 5,
+          testimonial: row[colIndex.testimonial] || '',
+          extractedQuote: row[colIndex.extractedQuote] || '',
+          tags: tagsArray,
+          headshotUrl: row[colIndex.headshotUrl] || '',
+          timestamp: formattedDate
+        });
+      }
+    }
+
+    return results;
+  } catch (err) {
+    Logger.log('Error in getApprovedTestimonials: ' + err.toString());
+    return [];
+  }
 }
 
 /**

@@ -237,15 +237,44 @@
     let currentFilter = "all";
 
     function loadWall() {
+      const grid = document.getElementById("card-grid");
+      if (grid && !grid.innerHTML.includes("spinner")) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-24 text-on-surface-variant flex flex-col items-center justify-center gap-2">
+            <div class="spinner"></div>
+            <span>Loading Wall of Love...</span>
+          </div>
+        `;
+      }
+
       if (typeof google !== "undefined" && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(renderWall)
-          .withFailureHandler(function(err) {
-            document.getElementById("card-grid").innerHTML = `
-              <div class="col-span-full text-center py-16 text-error">
-                Failed to load Wall of Love: ${err.message || err}
+        const timeoutId = setTimeout(() => {
+          if (approvedTestimonials.length === 0 && grid && grid.innerHTML.includes("spinner")) {
+            grid.innerHTML = `
+              <div class="col-span-full text-center py-16 text-on-surface-variant flex flex-col items-center justify-center gap-3">
+                <p class="text-sm">Still loading? Check your connection or try refreshing.</p>
+                <button onclick="loadWall()" class="px-4 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container" type="button">Retry</button>
               </div>
             `;
+          }
+        }, 12000);
+
+        google.script.run
+          .withSuccessHandler(function(items) {
+            clearTimeout(timeoutId);
+            renderWall(items);
+          })
+          .withFailureHandler(function(err) {
+            clearTimeout(timeoutId);
+            if (grid) {
+              grid.innerHTML = `
+                <div class="col-span-full text-center py-16 text-error">
+                  <p class="font-semibold mb-2">Failed to load Wall of Love</p>
+                  <p class="text-xs mb-4">${err && err.message ? err.message : err}</p>
+                  <button onclick="loadWall()" class="px-4 py-1.5 rounded-lg bg-surface-container text-on-surface text-xs font-semibold hover:bg-surface-container-high" type="button">Try Again</button>
+                </div>
+              `;
+            }
           })
           .getApprovedTestimonials();
       } else {
@@ -362,6 +391,13 @@
 
       if (filtered.length === 0) {
         grid.innerHTML = "";
+        if (approvedTestimonials.length === 0) {
+          emptyState.querySelector("h3").textContent = "No approved testimonials yet";
+          emptyState.querySelector("p").textContent = "Testimonials approved in the Admin Dashboard will appear here.";
+        } else {
+          emptyState.querySelector("h3").textContent = "No testimonials found";
+          emptyState.querySelector("p").textContent = "There are no approved stories matching this tag right now.";
+        }
         emptyState.classList.remove("hidden");
         emptyState.classList.add("flex");
         return;
@@ -469,8 +505,12 @@
       }
     })();
 
-    // Initial load
-    document.addEventListener("DOMContentLoaded", loadWall);
+    // Initial load: execute immediately if DOM already loaded, or wait for event
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", loadWall);
+    } else {
+      loadWall();
+    }
   </script>
 </body>
 </html>
