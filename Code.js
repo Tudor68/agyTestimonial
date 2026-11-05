@@ -95,23 +95,48 @@ function getConfig() {
  */
 function getTestimonialsSheet() {
   const config = getConfig();
-  let ss;
+  let ss = null;
   
   if (config.spreadsheetId) {
-    ss = SpreadsheetApp.openById(config.spreadsheetId);
-  } else {
+    try {
+      ss = SpreadsheetApp.openById(config.spreadsheetId);
+    } catch (e) {
+      Logger.log('Could not open spreadsheet by config ID: ' + e);
+      ss = null;
+    }
+  }
+
+  if (!ss) {
     try {
       ss = SpreadsheetApp.getActiveSpreadsheet();
     } catch (e) {
-      // Fallback: create or search for a sheet named "Testimonials Database"
+      ss = null;
+    }
+  }
+
+  if (!ss) {
+    try {
+      // Fallback: search for or create a sheet named "Testimonials Database"
       const files = DriveApp.getFilesByName("Testimonials Database");
       if (files.hasNext()) {
         ss = SpreadsheetApp.open(files.next());
       } else {
         ss = SpreadsheetApp.create("Testimonials Database");
-        PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', ss.getId());
       }
+      if (ss) {
+        try {
+          PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', ss.getId());
+        } catch (propErr) {
+          Logger.log('Could not save SPREADSHEET_ID property: ' + propErr);
+        }
+      }
+    } catch (driveErr) {
+      Logger.log('Error locating or creating Testimonials Database spreadsheet: ' + driveErr);
     }
+  }
+
+  if (!ss) {
+    throw new Error('Unable to find or create the Testimonials Database spreadsheet.');
   }
 
   let sheet = ss.getSheetByName('Testimonials');

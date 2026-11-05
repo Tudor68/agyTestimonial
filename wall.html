@@ -324,10 +324,18 @@
 
       // Update Header Stats
       const count = approvedTestimonials.length;
-      document.getElementById("header-review-count").textContent = `over ${count} stories`;
-      if (count > 0) {
-        const sumRating = approvedTestimonials.reduce((acc, cur) => acc + (Number(cur.rating) || 5), 0);
-        document.getElementById("header-rating-avg").textContent = `${(sumRating / count).toFixed(1)}/5`;
+      const countEl = document.getElementById("header-review-count");
+      const ratingEl = document.getElementById("header-rating-avg");
+      if (countEl) {
+        countEl.textContent = count > 0 ? `over ${count} stories` : `0 stories`;
+      }
+      if (ratingEl) {
+        if (count > 0) {
+          const sumRating = approvedTestimonials.reduce((acc, cur) => acc + (Number(cur.rating) || 5), 0);
+          ratingEl.textContent = `${(sumRating / count).toFixed(1)}/5`;
+        } else {
+          ratingEl.textContent = `0.0/5`;
+        }
       }
 
       // Build Tag List
@@ -383,6 +391,27 @@
       const grid = document.getElementById("card-grid");
       const emptyState = document.getElementById("filter-empty-state");
 
+      if (approvedTestimonials.length === 0) {
+        if (grid) {
+          grid.innerHTML = `
+            <div class="col-span-full text-center py-16 text-on-surface-variant flex flex-col items-center justify-center gap-3">
+              <span class="material-symbols-outlined text-[48px] text-outline">forum</span>
+              <h3 class="text-base font-bold text-on-surface">No approved testimonials yet</h3>
+              <p class="text-xs max-w-sm">Testimonials approved in the Admin Dashboard will appear here automatically.</p>
+              <a href="https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=form" target="_top" class="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-on-primary text-xs font-semibold hover:bg-primary-container shadow-sm">
+                <span class="material-symbols-outlined text-[16px]">add_comment</span>
+                <span>Submit First Story</span>
+              </a>
+            </div>
+          `;
+        }
+        if (emptyState) {
+          emptyState.classList.add("hidden");
+          emptyState.classList.remove("flex");
+        }
+        return;
+      }
+
       const filtered = approvedTestimonials.filter(item => {
         if (currentFilter === "all") return true;
         if (!item.tags) return false;
@@ -390,21 +419,20 @@
       });
 
       if (filtered.length === 0) {
-        grid.innerHTML = "";
-        if (approvedTestimonials.length === 0) {
-          emptyState.querySelector("h3").textContent = "No approved testimonials yet";
-          emptyState.querySelector("p").textContent = "Testimonials approved in the Admin Dashboard will appear here.";
-        } else {
+        if (grid) grid.innerHTML = "";
+        if (emptyState) {
           emptyState.querySelector("h3").textContent = "No testimonials found";
           emptyState.querySelector("p").textContent = "There are no approved stories matching this tag right now.";
+          emptyState.classList.remove("hidden");
+          emptyState.classList.add("flex");
         }
-        emptyState.classList.remove("hidden");
-        emptyState.classList.add("flex");
         return;
       }
 
-      emptyState.classList.add("hidden");
-      emptyState.classList.remove("flex");
+      if (emptyState) {
+        emptyState.classList.add("hidden");
+        emptyState.classList.remove("flex");
+      }
 
       grid.innerHTML = filtered.map(item => {
         const stars = "★".repeat(Number(item.rating) || 5) + "☆".repeat(Math.max(0, 5 - (Number(item.rating) || 5)));
