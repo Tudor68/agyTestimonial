@@ -25,12 +25,15 @@
 | [`appsscript.json`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/appsscript.json) | Script Manifest | Explicit OAuth scopes configured:<br>• `script.send_mail`<br>• `spreadsheets`<br>• `drive`<br>• `script.external_request`<br>• `userinfo.email` |
 | [`spec.md`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/spec.md) | Technical Specification | Comprehensive project requirements, API contracts, and schema definitions. |
 | [`README.md`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/README.md) | Setup & Deployment Guide | Documentation for deployment, script properties, and operational architecture. |
+| [`.agents/skills/save-progress/SKILL.md`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/.agents/skills/save-progress/SKILL.md) | Workspace Skill (`/saveProgress`) | Standardizes reviewing the active session, checking git diffs, and updating `CONTEXT.md`. |
+| [`.agents/skills/pushAll/SKILL.md`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/.agents/skills/pushAll/SKILL.md) | Workspace Skill (`/pushAll`) | Deploys code to Google Apps Script cloud via `clasp push` with immediate failure halting, explains commands, and commits/pushes to git/GitHub. |
 
 ---
 
 ## 3. Git History & Uncommitted Changes
 
 ### Recent Commit Log
+- `e7e32da`: Add `authorizeEmail` utility and `CONTEXT.md` documentation.
 - `2a1162c`: Add `oauthScopes` to `appsscript.json` for `MailApp` permissions.
 - `ba2c04f`: Add `testSendEmail` function and clarify local execution in `form.html`.
 - `c4d8105`: Add `setAdminEmail` utility and sync `Code.js`.
@@ -38,7 +41,8 @@
 - `2248008`: Add Testimonial Hub full implementation (form, admin, wall, Gemini AI integration).
 
 ### Current Working Directory State
-- Unstaged modification in [`Code.js`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/Code.js): Added `authorizeEmail()` helper function to simplify running a one-time OAuth consent prompt in the Apps Script editor without encountering swallowed errors.
+- Untracked workspace customizations directory: [`.agents/`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/.agents/) containing `skills/save-progress/` and `skills/pushAll/`.
+- Updated documentation: [`CONTEXT.md`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/CONTEXT.md).
 
 ---
 
@@ -55,6 +59,8 @@
    - `getApprovedTestimonials()` explicitly strips submitter emails and non-approved rows on the backend before returning data to the client.
 5. **Unified Web App Routing**:
    - A single Google Apps Script deployment services all three interfaces via `?page=form` (default), `?page=admin`, and `?page=wall`, simplifying deployment updates.
+6. **Workspace-Scoped Agent Skills**:
+   - Standard Antigravity agent discovery path `.agents/skills/` is used to create local, project-bound skills (`/saveProgress` and `/pushAll`) without polluting global machine configurations.
 
 ---
 
@@ -74,9 +80,8 @@ The application relies on the following Google Apps Script Script Properties (`P
 
 ## 6. Next Steps & Recommended Improvements
 
-1. **Commit Working Changes**: Stage and commit the `authorizeEmail()` helper in [`Code.js`](file:///Users/sharonstephan/Library/CloudStorage/GoogleDrive-shobdentest@gmail.com/My%20Drive/Gemini%20for%20Builders%20Course/Testamonial%20Project/agyTestimonials/Code.js) and push to the remote repository.
-2. **Clasp Push**: Synchronize modified local files (`Code.js`, `appsscript.json`) with the remote Apps Script project using `clasp push`.
-3. **Abuse Prevention**: Introduce honeypot fields or simple anti-spam checks in `form.html` to avoid automated spam submissions.
-4. **Admin Authentication**: Restrict access to `?page=admin` by verifying whether `Session.getActiveUser().getEmail()` matches an authorized administrator.
-5. **Digest Mode for High Volume**: Provide an option for daily/weekly email digests rather than per-submission emails if submission frequency grows.
+1. **Execute `/pushAll`**: Push to Google Apps Script cloud via `clasp push`, then stage and commit `.agents/` and `CONTEXT.md` to git/GitHub.
+2. **Abuse Prevention**: Introduce honeypot fields or simple anti-spam checks in `form.html` to avoid automated spam submissions.
+3. **Admin Authentication**: Restrict access to `?page=admin` by verifying whether `Session.getActiveUser().getEmail()` matches an authorized administrator.
+4. **Digest Mode for High Volume**: Provide an option for daily/weekly email digests rather than per-submission emails if submission frequency grows.
 
