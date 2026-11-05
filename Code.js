@@ -26,11 +26,21 @@ const HEADERS = [
  */
 function getConfig() {
   const props = PropertiesService.getScriptProperties();
+  let adminEmail = props.getProperty('ADMIN_EMAIL');
+  if (!adminEmail) {
+    try {
+      adminEmail = Session.getEffectiveUser().getEmail();
+    } catch (e) {
+      adminEmail = '';
+    }
+  }
+
   return {
     geminiApiKey: props.getProperty('GEMINI_API_KEY') || '',
     driveFolderId: props.getProperty('DRIVE_FOLDER_ID') || '',
     chatWebhookUrl: props.getProperty('CHAT_WEBHOOK_URL') || '',
-    spreadsheetId: props.getProperty('SPREADSHEET_ID') || ''
+    spreadsheetId: props.getProperty('SPREADSHEET_ID') || '',
+    adminEmail: adminEmail || ''
   };
 }
 
@@ -298,6 +308,109 @@ function sendChatNotification(data) {
 }
 
 /**
+ * Sends a styled HTML email summary to the administrator when a new testimonial is submitted.
+ * Contains submitter details, star rating, extracted AI quote, full text, and links to
+ * the Admin Moderation Dashboard and Wall of Love.
+ * @param {Object} data Testimonial data
+ */
+function sendEmailNotification(data) {
+  const config = getConfig();
+  const recipient = config.adminEmail;
+  if (!recipient) {
+    console.info('No admin email available. Skipping email summary.');
+    return;
+  }
+
+  let webAppUrl = '';
+  try {
+    webAppUrl = ScriptApp.getService().getUrl() || '';
+  } catch (e) {
+    webAppUrl = '';
+  }
+
+  const separator = webAppUrl.includes('?') ? '&' : '?';
+  const adminUrl = webAppUrl ? `${webAppUrl}${separator}page=admin` : '#';
+  const wallUrl = webAppUrl ? `${webAppUrl}${separator}page=wall` : '#';
+
+  const stars = '★'.repeat(Number(data.rating) || 5) + '☆'.repeat(Math.max(0, 5 - (Number(data.rating) || 5)));
+  const orgText = data.organization ? ` (${data.organization})` : '';
+
+  const subject = `🌟 New Testimonial from ${data.name}${orgText} - PraisePulse`;
+
+  const htmlBody = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <style>
+        body { font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #faf8ff; color: #131b2e; margin: 0; padding: 24px; }
+        .card { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; border: 1px solid #dae2fd; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.04); }
+        .header { background: #3525cd; padding: 24px 32px; color: #ffffff; }
+        .header h2 { margin: 0; font-size: 20px; font-weight: 700; }
+        .header p { margin: 4px 0 0; font-size: 13px; color: #dad7ff; }
+        .content { padding: 32px; }
+        .badge { display: inline-block; background: #eaedff; color: #3525cd; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 9999px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stars { color: #fea619; font-size: 18px; margin: 8px 0; }
+        .hook-box { background: #f2f3ff; border-left: 4px solid #3525cd; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 18px 0; }
+        .hook-title { font-size: 11px; font-weight: 700; color: #3525cd; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .hook-text { font-size: 15px; font-style: italic; color: #131b2e; font-weight: 600; margin: 0; }
+        .full-text { font-size: 14px; line-height: 1.6; color: #464555; background: #faf8ff; padding: 16px; border-radius: 8px; border: 1px solid #eaedff; margin: 16px 0; white-space: pre-wrap; }
+        .tags { font-size: 12px; color: #464555; margin-bottom: 24px; }
+        .btn-row { margin-top: 28px; padding-top: 20px; border-top: 1px solid #eaedff; }
+        .btn-primary { display: inline-block; background: #3525cd; color: #ffffff !important; padding: 12px 22px; border-radius: 8px; font-weight: 600; font-size: 13px; text-decoration: none; margin-right: 10px; margin-bottom: 8px; }
+        .btn-secondary { display: inline-block; background: #eaedff; color: #131b2e !important; padding: 12px 22px; border-radius: 8px; font-weight: 600; font-size: 13px; text-decoration: none; margin-bottom: 8px; }
+        .footer { padding: 20px 32px; background: #f2f3ff; font-size: 12px; color: #777587; text-align: center; border-top: 1px solid #dae2fd; }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="header">
+          <h2>🌟 New Testimonial Submitted</h2>
+          <p>PraisePulse Feedback Hub</p>
+        </div>
+        <div class="content">
+          <span class="badge">Status: Pending Review</span>
+          <h3 style="margin: 16px 0 4px; font-size: 18px; color: #131b2e;">${data.name}</h3>
+          <p style="margin: 0; font-size: 13px; color: #777587;">${data.organization ? data.organization + ' • ' : ''}${data.email || 'Confidential'}</p>
+          <div class="stars">${stars} <span style="font-size: 13px; color: #855300; font-weight: 600;">(${data.rating}/5)</span></div>
+
+          <div class="hook-box">
+            <div class="hook-title">✨ Gemini AI Best Quote:</div>
+            <p class="hook-text">“${data.extractedQuote || data.testimonial}”</p>
+          </div>
+
+          <div style="font-size: 12px; font-weight: 600; color: #131b2e; margin-top: 16px;">Full Testimonial:</div>
+          <div class="full-text">${data.testimonial}</div>
+
+          <div class="tags"><b>Topic Tags:</b> ${data.tags || 'General'}</div>
+
+          <div class="btn-row">
+            <a href="${adminUrl}" class="btn-primary" target="_blank">Review in Admin Center</a>
+            <a href="${wallUrl}" class="btn-secondary" target="_blank">View Wall of Love</a>
+          </div>
+        </div>
+        <div class="footer">
+          This notification was automatically sent by PraisePulse / TestimonialFlow.<br>
+          Submitted on ${Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'MMM d, yyyy HH:mm')}.
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  try {
+    MailApp.sendEmail({
+      to: recipient,
+      subject: subject,
+      htmlBody: htmlBody
+    });
+    console.info(`Testimonial summary email sent successfully to ${recipient}`);
+  } catch (err) {
+    console.error(`Error sending testimonial summary email: ${err.message}`);
+  }
+}
+
+/**
  * Public Submission Endpoint called by submission form (google.script.run)
  * @param {Object} formObject
  * @return {Object} Response status
@@ -344,6 +457,18 @@ function submitTestimonial(formObject) {
     sendChatNotification({
       rowId: rowId,
       name: formObject.name.trim(),
+      organization: organization.trim(),
+      rating: rating,
+      testimonial: formObject.testimonial.trim(),
+      extractedQuote: aiResult.extractedQuote,
+      tags: aiResult.tags
+    });
+
+    // 5. Trigger Email Summary Notification
+    sendEmailNotification({
+      rowId: rowId,
+      name: formObject.name.trim(),
+      email: formObject.email.trim(),
       organization: organization.trim(),
       rating: rating,
       testimonial: formObject.testimonial.trim(),
