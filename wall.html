@@ -95,13 +95,13 @@
       </div>
 
       <nav class="hidden md:flex items-center gap-space-xs">
-        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="?page=admin">Dashboard</a>
-        <a aria-current="page" class="px-space-md py-space-xs rounded-lg transition-colors bg-surface-container text-primary font-semibold text-sm" href="?page=wall">Wall of Love</a>
-        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="?page=form">Public Form</a>
+        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=admin" target="_top">Dashboard</a>
+        <a aria-current="page" class="px-space-md py-space-xs rounded-lg transition-colors bg-surface-container text-primary font-semibold text-sm" href="https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=wall" target="_top">Wall of Love</a>
+        <a class="px-space-md py-space-xs rounded-lg text-sm text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=form" target="_top">Public Form</a>
       </nav>
 
       <div class="flex items-center gap-space-md shrink-0">
-        <a class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm" href="?page=form">
+        <a class="inline-flex items-center gap-space-xs px-space-md py-space-xs rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-colors shadow-sm" href="https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=form" target="_top">
           <span class="material-symbols-outlined text-[18px]">add_comment</span>
           <span>Submit Story</span>
         </a>
@@ -211,7 +211,7 @@
             <p class="text-xs text-on-surface-variant">Collect authentic customer stories and boost social proof with ease.</p>
           </div>
         </div>
-        <a class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors text-xs font-semibold shrink-0" href="?page=form">
+        <a class="px-space-md py-2 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors text-xs font-semibold shrink-0" href="https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=form" target="_top">
           Share Your Story
         </a>
       </div>
@@ -224,8 +224,8 @@
     <div class="max-w-7xl mx-auto px-margin flex flex-col sm:flex-row items-center justify-between gap-space-md text-center sm:text-left">
       <p class="text-xs text-on-surface-variant">© 2024 TestimonialFlow Inc. All rights reserved.</p>
       <div class="flex items-center gap-space-lg">
-        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="?page=form">Submit Testimonial</a>
-        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="?page=admin">Admin Moderation</a>
+        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=form" target="_top">Submit Testimonial</a>
+        <a class="text-xs text-on-surface-variant hover:text-on-surface transition-colors" href="https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=admin" target="_top">Admin Moderation</a>
       </div>
     </div>
   </footer>
@@ -431,8 +431,8 @@
       const copyLabel = document.getElementById("copy-btn-label");
       const codeSnippet = document.getElementById("embed-code-snippet");
 
-      // Dynamically compute embed code
-      const currentUrl = window.location.href.split("?")[0] + "?page=wall";
+      // Canonical embed code
+      const currentUrl = "https://script.google.com/macros/s/AKfycbypL1nXmTN7k0TjoTtsmiXREwTIj2fq4ZigLvgzYKkqjWlr2KCW_RSYE0REbJHTfl8R/exec?page=wall";
       if (codeSnippet) {
         codeSnippet.textContent = `<iframe src="${currentUrl}" width="100%" height="800" frameborder="0" style="border:none;border-radius:12px;"></iframe>`;
       }
